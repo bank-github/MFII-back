@@ -1,26 +1,27 @@
 var mongo = require('mongodb');
-var { ObjectId } = require('mongodb').ObjectId;
-var PlantController = require('../controller/PlantController')
+const { ObjectId } = require('mongodb');
+var PlantController = require('../controller/PlantController');
+var PictureController = require('../../Picture/controller/PictureController');
 var resMsg = require('../../../../../config/message');
 
 exports.getDetailService = async function (request, response, next) {
-    // try {
-    //     var _id = request.params._id;
-    //     var obj_id = new ObjectId(_id);
-    //     console.log(obj_id);
-    //     var querys = {_id: obj_id};
-    //     const doc = await PlantController.getDetailController(querys);
-    //     response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
+    try {
+        var query = { PlantId : request.params._id};
+        const objectId = new ObjectId(query.PlantId);
+        const doc = await PlantController.getDetailController(objectId);
+        const img = await PictureController.getPlantImage(query);
+        doc.result.Image = img.result.Image;
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
-    // } catch (err) {
-    //     if (err.code != null) {
-    //         console.log(err.error)
-    //         response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
-    //     } else {
-    //         console.log(err);
-    //         response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
-    //     }
-    // }
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
+    }
 };
 exports.getPlantsService = async function (request, response, next) {
     try {

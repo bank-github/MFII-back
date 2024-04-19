@@ -30,6 +30,7 @@ var PictureServices = require("../project/service/Picture/service/PictureService
 
   // ========================= Admin path ===========================
   app.post(pathAdmin + "/add-plant", PlantServices.addPlantService);
+  app.post(pathAdmin + "/get-plants", PlantServices.getPlantsService);
   // ================================================================
 
 

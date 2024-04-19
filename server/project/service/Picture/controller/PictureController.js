@@ -1,21 +1,23 @@
 var mongo = require('mongodb');
 var objSchema = require('../models/PictureModel');
 
-exports.onQuery = async function (query) {
+exports.getPlantImage = async function (query) {
     return new Promise((resolve, reject) => {
         objSchema
             .findOne(query)
-            // .sort("coin")
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
+            // // .sort("coin")
+            // .populate([
+            //     // {path : "address.province"},
+            //     // {path : "address.district"},
+            //     // {path : "bankInfo.bankName"}
+            // ])
             .lean()
             .exec().then(doc => {
-                resolve(doc);
+                var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
+                    resolve(resInfo);
             }).catch(err =>{
-                reject(err);
+                var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } }
+                reject(rejInfo);
             });
     });
 }

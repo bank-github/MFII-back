@@ -1,10 +1,10 @@
-var mongo = require('mongodb');
+var mongo = require('mongodb'); 
 var objSchema = require('../models/PlantModel');
 
 exports.getDetailController = async function (query) {
     return new Promise((resolve, reject) => {
         objSchema
-            .findOne({ query })
+            .findOne( query )
             // .sort("coin")
             // .populate([
             //     // {path : "address.province"},
@@ -13,16 +13,16 @@ exports.getDetailController = async function (query) {
             // ])
             .lean()
             .exec().then(doc => {
-                // if (doc == null) {
-                //     var rejInfo = { error: doc, code: { codeNO: 404, description: 40401 } };
-                //     reject(rejInfo);
-                // } else {
-                //     var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
-                //     resolve(resInfo);
-                // }
+                if (doc == null) {
+                    var rejInfo = { error: doc, code: { codeNO: 404, description: 40401 } };
+                    reject(rejInfo);
+                } else {
+                    var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
+                    resolve(resInfo);
+                }
             }).catch(err => {
-                // var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } }
-                // reject(rejInfo);
+                var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } }
+                reject(rejInfo);
             });
     });
 }
