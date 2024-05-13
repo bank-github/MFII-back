@@ -78,6 +78,9 @@ exports.getPlantsService = async function (request, response, next) {
 exports.addPlantService = async function (request, response, next) {
     try {
         const doc = await PlantController.addPlantController(request.body);
+        var plantImg = {PlantId : doc.result._id, Image: ["haveno.jpg"] };
+        const img = await PictureController.addPlantImage(plantImg);
+        doc.result.Image = img.result.Image;
         response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
