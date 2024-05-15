@@ -33,7 +33,7 @@ exports.onQuerys = async function (request, response, next) {
         response.status(404).json(resData);
     }
 };
-exports.onCreate = async function (request, response, next) {
+exports.addPlantImage = async function (request, response, next) {
     try {
         const doc = await Setting_Status.onCreate(request.body);
 

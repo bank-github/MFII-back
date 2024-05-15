@@ -1,26 +1,29 @@
 var mongo = require('mongodb');
-var { ObjectId } = require('mongodb').ObjectId;
-var PlantController = require('../controller/PlantController')
+const { ObjectId } = require('mongodb');
+var PlantController = require('../controller/PlantController');
+var PictureController = require('../../Picture/controller/PictureController');
+var ImageController = require('../../Picture/controller/PictureController');
 var resMsg = require('../../../../../config/message');
 
-exports.getDetailService = async function (request, response, next) {
-    // try {
-    //     var _id = request.params._id;
-    //     var obj_id = new ObjectId(_id);
-    //     console.log(obj_id);
-    //     var querys = {_id: obj_id};
-    //     const doc = await PlantController.getDetailController(querys);
-    //     response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
-    // } catch (err) {
-    //     if (err.code != null) {
-    //         console.log(err.error)
-    //         response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
-    //     } else {
-    //         console.log(err);
-    //         response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
-    //     }
-    // }
+exports.getDetailService = async function (request, response, next) {
+    try {
+        var query = { PlantId : request.params._id};
+        const objectId = new ObjectId(query.PlantId);
+        const doc = await PlantController.getDetailController(objectId);
+        const img = await PictureController.getPlantImage(query);
+        doc.result.Image = img.result.Image;
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
+
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
+    }
 };
 exports.getPlantsService = async function (request, response, next) {
     try {
@@ -76,8 +79,47 @@ exports.getPlantsService = async function (request, response, next) {
 };
 exports.addPlantService = async function (request, response, next) {
     try {
-        const doc = await PlantController.addPlantController(request.body);
-        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
+        var data = request.body;
+        // change string each field to json
+        data.Name = JSON.parse(data.Name);
+        data.OtherName = JSON.parse(data.OtherName);
+        data.SciName = JSON.parse(data.SciName);
+        data.FamName = JSON.parse(data.FamName);
+        data.Character = JSON.parse(data.Character);
+        data.Ecology = JSON.parse(data.Ecology);
+        data.Distribution = JSON.parse(data.Distribution);
+        data.Utilization = JSON.parse(data.Utilization);
+        data.FloweringTime = JSON.parse(data.FloweringTime);
+        data.FrutingTime = JSON.parse(data.FrutingTime);
+        data.Location = JSON.parse(data.Location);
+        
+        // add plant data to database
+        const PlantDoc = await PlantController.addPlantController(data);
+        const files = request.files;
+        console.log(files);
+        if(files.length > 0){
+            var name = '';
+            files.forEach((file, index, arr) =>{
+                name += file.filename + ",";
+            });
+            name = name.substring(0, name.lastIndexOf(","));
+            plantImage = {PlantId : PlantDoc.result._id, Image: name };
+        }else{
+            plantImage = {PlantId : PlantDoc.result._id, Image: ["haveno.jpg"] };
+        }
+
+        // add image data to database
+        const ImageDoc = await ImageController.addPlantImage(plantImage);
+        // merge 2 data
+        const doc = {
+            result : {
+                Plant : PlantDoc.result,
+                Image : ImageDoc.result
+            },
+            code : PlantDoc.code // or ImageDoc.code either is OK
+        };
+
+        response.status(ImageDoc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(ImageDoc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)

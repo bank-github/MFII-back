@@ -4,8 +4,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PictureModel = new Schema({
-    PlantID     : {type:String, require: true},
-    Imgage      : {type: Array}
+    PlantId     : {type:String, require: true},
+    Image      : {type: Array}
 
 });
 

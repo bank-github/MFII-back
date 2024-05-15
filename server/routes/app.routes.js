@@ -1,6 +1,8 @@
 var UserServices = require("../project/service/User/service/UserService");
 var PlantServices = require("../project/service/Plant/service/PlantService");
 var PictureServices = require("../project/service/Picture/service/PictureService");
+var upload = require('../../config/upload');
+
 
 
 ; module.exports = function (app) {
@@ -29,10 +31,9 @@ var PictureServices = require("../project/service/Picture/service/PictureService
   // ================================================================
 
   // ========================= Admin path ===========================
-  app.post(pathAdmin + "/add-plant", PlantServices.addPlantService);
+  app.post(pathAdmin + "/add-plant", upload.any(), PlantServices.addPlantService);
+  app.post(pathAdmin + "/get-plants", PlantServices.getPlantsService);
   // ================================================================
-
-
 
 
 
