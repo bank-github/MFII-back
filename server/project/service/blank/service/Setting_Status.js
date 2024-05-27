@@ -1,5 +1,5 @@
 var mongo = require('mongodb');
-var Setting_Status = require('../controller/PictureController')
+var Setting_Status = require('../controller/Setting_Status')
 
 exports.onQuery = async function (request, response, next) {
     try {
@@ -33,7 +33,7 @@ exports.onQuerys = async function (request, response, next) {
         response.status(404).json(resData);
     }
 };
-exports.addPlantImage = async function (request, response, next) {
+exports.onCreate = async function (request, response, next) {
     try {
         const doc = await Setting_Status.onCreate(request.body);
 

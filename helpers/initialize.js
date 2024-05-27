@@ -19,7 +19,6 @@ exports.init = function (callback) {
         // we're connected!
         global.mongodb = db;
         console.log('----- Connect To Mongodb Status[' + JSON.stringify(resMsg.getMsg(20000)) + '] -----');
-        console.log(`http://localhost:${cfg.host.port}`);
         return callback(true);
     });
 

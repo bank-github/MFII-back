@@ -44,7 +44,6 @@ module.exports = function () {
       // app.use(validator());
 
       app.use(sass({src: "./sass", dest: "./public/css", debug: true, outputStyle: "compressed",}));
-      app.use('/upload', express.static('upload'));
       app.use(express.static(path.join(__dirname, "./public")));
       app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
       app.use(serveStatic("public", { index: ["index.html", "index.htm"] }));
