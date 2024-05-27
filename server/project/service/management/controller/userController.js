@@ -1,12 +1,12 @@
 var mongo = require('mongodb');
-var objSchema = require('../models/userModel');
+var userModel = require('../models/userModel');
 var bcrypt = require('bcrypt');
 const saltRound = 10;
 
 exports.loginUserController = async function (data) {
     return new Promise((resolve, reject) => {
         var query = { 'username': data.username }
-        objSchema
+        userModel
             .findOne(query)
             // .sort("coin")
             .populate([
@@ -43,7 +43,7 @@ exports.loginUserController = async function (data) {
 }
 exports.onQuerys = async function () {
     return new Promise((resolve, reject) => {
-        objSchema
+        userModel
             .find()
             .sort({ _id: -1 })
             .populate([
@@ -69,7 +69,7 @@ exports.onCreate = async function (data) {
             } else {
                 data.password = hash
                 // console.log(data);
-                var objSchemas = new objSchema(data);
+                var objSchemas = new userModel(data);
                 objSchemas.save()
                     .then(doc => {
                         var resData = { doc, 'code': 200 };
@@ -85,7 +85,7 @@ exports.onCreate = async function (data) {
 }
 exports.onUpdate = async function (query, data) {
     return new Promise((resolve, reject) => {
-        objSchema
+        userModel
             .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: true })
             .populate([
                 // {path : "address.province"},
@@ -103,7 +103,7 @@ exports.onUpdate = async function (query, data) {
 exports.onDelete = async function (query) {
 
     return new Promise((resolve, reject) => {
-        objSchema
+        userModel
             .remove(query)
             .lean()
             .exec().then(doc => {
