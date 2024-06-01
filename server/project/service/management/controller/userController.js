@@ -1,88 +1,112 @@
 var mongo = require('mongodb');
 var userModel = require('../models/userModel');
 var bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 const saltRound = 10;
-
+const secretKey = "MFII-project"
+exports.createUserController = async function (data) {
+    return new Promise((resolve, reject) => {
+        userModel.findOne({ email: data.email }, { _id: 0, email: 1, firstName: 1, lastName: 1 })
+            .then((exitUser) => {
+                // user already exit in database
+                if (exitUser) {
+                    reject({ error: exitUser, code: { codeNo: 403, description: 40301 } });
+                }
+                // user not exit in database
+                else {
+                    //hash password
+                    bcrypt.hash(data.password, saltRound, (err, hash) => {
+                        if (err) {
+                            reject({ error: err, code: { codeNo: 500, description: 50000 } });
+                        } else {
+                            //assign password to new hash password
+                            data.password = hash
+                            var userData = new userModel(data);
+                            //add data to database
+                            userData.save()
+                                .then(() => {
+                                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
+                                    resolve(resInfo);
+                                }).catch(err => {
+                                    var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+                                    reject(resInfo);
+                                });
+                        }
+                    })
+                }
+            })
+            .catch((err) => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            })
+    })
+};
 exports.loginUserController = async function (data) {
     return new Promise((resolve, reject) => {
-        var query = { 'username': data.username }
         userModel
-            .findOne(query)
-            // .sort("coin")
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
-            .lean()
-            .exec().then(doc => {
-                // console.log(doc);
+            .findOne({ "email": data.email }, { __v: 0 })
+            .then(doc => {
+                // user not found
                 if (doc == null) {
-                    var resData = { code: { status: 404, typeCode: 40402 } };
-                    // console.log(resData);
-                    reject(resData);
+                    var resInfo = { error: {}, code: { codeNo: 404, description: 40402 } };
+                    reject(resInfo);
                 } else {
+                    // compare password to login
                     bcrypt.compare(data.password, doc.password, (err, result) => {
                         if (err) {
-                            var resData = { err: err, code: { status: 500, typeCode: 50000 } };
-                            reject(resData);
+                            var resInfo = { error: err, code: { codeNo: 500, description: 50000 } };
+                            reject(resInfo);
                         } else if (result) {
-                            var resData = { code: 200 };
-                            resolve(resData);
+                            // create new variable to keep data without password to docNoPassword
+                            const { password, ...docNoPassword } = doc.toObject();
+                            //create token for login user for 1 hr
+                            const token = jwt.sign({userId: doc._id, role: doc.role}, secretKey, {expiresIn: '1h'});
+                            docNoPassword.token = token;
+                            var resInfo = { result: docNoPassword, code: { codeNo: 200, description: 20000 } };
+                            resolve(resInfo);
                         } else {
-                            var resData = { code: { status: 401, typeCode: 40105 } };
-                            reject(resData);
+                            var resInfo = { error: {}, code: { codeNo: 401, description: 40105 } };
+                            reject(resInfo);
                         }
                     })
                 }
             }).catch(err => {
-                var resData = { err: err, code: { status: 500, typeCode: 50000 } };
-                reject(resData);
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
-exports.onQuerys = async function () {
+};
+exports.getUserController = async function () {
     return new Promise((resolve, reject) => {
         userModel
-            .find()
-            .sort({ _id: -1 })
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
-            .lean()
-            .exec().then(doc => {
-                var resData = {doc: doc, code: 200}
-                resolve(resData);
+            .find({}, { password: 0, __v: 0 })
+            .sort({ firstName: 1 })
+            .then(doc => {
+                var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } }
+                resolve(resInfo);
             }).catch(err => {
-                var resData = { err: err, code: { status: 500, typeCode: 50000 } };
-                reject(resData);
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
-exports.onCreate = async function (data) {
+};
+exports.deleteUserContoller = async function (query) {
+
     return new Promise((resolve, reject) => {
-        bcrypt.hash(data.password, saltRound, (err, hash) => {
-            if (err) {
-                reject({ 'code': 50003 })
-            } else {
-                data.password = hash
-                // console.log(data);
-                var objSchemas = new userModel(data);
-                objSchemas.save()
-                    .then(doc => {
-                        var resData = { doc, 'code': 200 };
-                        // console.log(resData);
-                        resolve(resData);
-                    }).catch(err => {
-                        var resErr = { err, 'code': 50003 }
-                        reject(resErr);
-                    });
-            }
-        })
+        userModel
+            .findOneAndDelete(query)
+            .then(deleteUser => {
+                // find user and delete
+                if (deleteUser) {
+                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                //no user in database
+                else{
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
     });
-}
+};
 exports.onUpdate = async function (query, data) {
     return new Promise((resolve, reject) => {
         userModel
@@ -92,19 +116,6 @@ exports.onUpdate = async function (query, data) {
                 // {path : "address.district"},
                 // {path : "bankInfo.bankName"}
             ])
-            .lean()
-            .exec().then(doc => {
-                resolve(doc);
-            }).catch(err => {
-                reject(err);
-            });
-    });
-}
-exports.onDelete = async function (query) {
-
-    return new Promise((resolve, reject) => {
-        userModel
-            .remove(query)
             .lean()
             .exec().then(doc => {
                 resolve(doc);
