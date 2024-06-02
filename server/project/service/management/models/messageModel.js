@@ -1,24 +1,15 @@
-'use strict';
+"use strict";
 
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+var User = require("../models/userModel")
 
 var messageModel = new Schema({
-    title           : [{
-        key            : {type: String, default: null},
-        value          : {type: String, default: null},
-    }],
-    description     : [{
-        key            : {type: String, default: null},
-        value          : {type: String, default: null},
-    }],
-    state           : {type: Boolean, default: true},
-    create          : {
-        by              : {type: Schema.ObjectId, ref: 'Infomation_Admins'},
-        datetime        : {type: Date, default: Date.now}
-    },
-
+    userId           : { type: mongoose.Schema.Types.ObjectId, ref: User, required: true },
+    BusinessType     : {type:String, require: true},
+    Description      : { type: String, require: true },
+    Scope            : { type: String, require: true },
 });
 
-var message = mongoose.model('message', messageModel, 'message');
+var message = mongoose.model("message", messageModel, "message");
 module.exports = message;

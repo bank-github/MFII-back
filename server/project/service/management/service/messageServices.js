@@ -1,5 +1,7 @@
 var mongo = require('mongodb');
 var messageController = require('../controller/messageController');
+var resMsg = require('../../../../../config/message');
+const { ObjectId } = require('mongodb');
 
 exports.onQuery = async function (request, response, next) {
     try {
@@ -16,36 +18,51 @@ exports.onQuery = async function (request, response, next) {
         response.status(404).json(resData);
     }
 };
-exports.onQuerys = async function (request, response, next) {
+
+exports.getRequestService = async function (request, response, next) {
     try {
 
-        var querys = {};
-
-        const doc = await messageController.onQuerys(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        // var querys = {userId : request.params._id};
+        // const objectId = new ObjectId(querys.userId);
+        const doc = await messageController.getRequestController();
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-        console.log(err);
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onCreate = async function (request, response, next) {
+
+exports.createRequestService = async function (request, response, next) {
     try {
-        const doc = await messageController.onCreate(request.body);
+        //request body from db
+        var data = request.body;
+        //Change string to json
+        // data.userId = JSON.parse(data.userId);
+        // data.BusinessType = JSON.parse(data.BusinessType);
+        // data.Description = JSON.parse(data.Description);
+        // data.Scope = JSON.parse(data.Scope);
 
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        //add data
+        const doc = await messageController.createRequestController(data);
+        response.status(doc.code.codeNO).json({ result: doc.data, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
+
 exports.onUpdate = async function (request, response, next) {
     try {
 

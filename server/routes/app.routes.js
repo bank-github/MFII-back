@@ -1,9 +1,10 @@
 var userManagement = require("../project/service/management/service/userServices");
-
+var mesManagement = require("../project/service/management/service/messageServices")
 
 ;module.exports = function (app) {
 
   var userPath = "/user";
+  // var mesPath = "/message";
   // // user
   app.get("/",function (req,response){
     response.status(200).json(new Date());
@@ -18,6 +19,9 @@ var userManagement = require("../project/service/management/service/userServices
   app.post(userPath + "/login", userManagement.longinUserServices);
   app.get(userPath + "/gets", userManagement.getUserServices);
 
+  //message path
+  app.post("/mes-request", mesManagement.createRequestService);
+  app.get("/mes-get", mesManagement.getRequestService);
 
 
 
