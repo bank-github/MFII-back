@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const resMsg = require('../config/message')
 const secretKey = "MFII-project";
+const multer = require('multer');
 
 exports.verifyTokenAndRole = function(role){
     return function(request, response, next) {
@@ -20,3 +21,4 @@ exports.verifyTokenAndRole = function(role){
         });
     }
 }
+
