@@ -59,7 +59,7 @@ exports.loginUserController = async function (data) {
                             // create new variable to keep data without password to docNoPassword
                             const { password, ...docNoPassword } = doc.toObject();
                             //create token for login user for 1 hr
-                            const token = jwt.sign({userId: doc._id, role: doc.role}, secretKey, {expiresIn: '1h'});
+                            const token = jwt.sign({ userId: doc._id, role: doc.role }, secretKey, { expiresIn: '1h' });
                             docNoPassword.token = token;
                             var resInfo = { result: docNoPassword, code: { codeNo: 200, description: 20000 } };
                             resolve(resInfo);
@@ -74,7 +74,7 @@ exports.loginUserController = async function (data) {
             });
     });
 };
-exports.getUserController = async function () {
+exports.getsUserController = async function () {
     return new Promise((resolve, reject) => {
         userModel
             .find({}, { password: 0, __v: 0 })
@@ -87,7 +87,19 @@ exports.getUserController = async function () {
             });
     });
 };
-exports.deleteUserContoller = async function (query) {
+exports.getUserController = async function (query) {
+    return new Promise((resolve, reject) => {
+        userModel
+            .findOne(query, { password: 0, __v: 0 })
+            .then(doc => {
+                var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } }
+                resolve(resInfo);
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+};
+exports.deleteStaffContoller = async function (query) {
 
     return new Promise((resolve, reject) => {
         userModel
@@ -99,7 +111,7 @@ exports.deleteUserContoller = async function (query) {
                     resolve(resInfo);
                 }
                 //no user in database
-                else{
+                else {
                     reject({ error: {}, code: { codeNo: 404, description: 40402 } });
                 }
             }).catch(err => {
@@ -107,23 +119,52 @@ exports.deleteUserContoller = async function (query) {
             });
     });
 };
-exports.onUpdate = async function (query, data) {
+exports.updateUserController = async function (query, data) {
     return new Promise((resolve, reject) => {
         userModel
-            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: true })
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
-            .lean()
-            .exec().then(doc => {
-                resolve(doc);
+            // find data and update with sent docUpdate data not original and when not found no add data
+            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: false }, { password: 0 })
+            .then(doc => {
+                // if can find and update data
+                if (doc) {
+                    // assign newDoc to keep data without password, role, __v
+                    const { password, role, __v, ...newDoc } = doc.toObject();
+                    var resInfo = { result: newDoc, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                // no update data
+                else{
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+
             }).catch(err => {
-                reject(err);
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
+};
+exports.updateStaffController = async function (query, data) {
+    return new Promise((resolve, reject) => {
+        userModel
+            // find data and update with sent docUpdate data not original and when not found no add data
+            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: false }, { password: 0 })
+            .then(doc => {
+                // if can find and update data
+                if (doc) {
+                    // assign newDoc to keep data without password, role, __v
+                    const { password, role, __v, ...newDoc } = doc.toObject();
+                    var resInfo = { result: newDoc, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                // no update data
+                else{
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+};
 
 
 

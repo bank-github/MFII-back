@@ -6,7 +6,7 @@ exports.verifyTokenAndRole = function(role){
     return function(request, response, next) {
         const token = request.headers.authorization;
         if (!token) {
-            return response.status(401).json({resutl: {}, description: resMsg.getMsg(40102)});
+            return response.status(401).json({resutl: {}, description: resMsg.getMsg(40107 )});
         }
         jwt.verify(token, secretKey, (err, decoded) => {
             if (err) {
