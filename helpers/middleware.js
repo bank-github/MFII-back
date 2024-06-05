@@ -1,33 +1,69 @@
 const jwt = require('jsonwebtoken');
-const resMsg = require('../config/message')
-const secretKey = "MFII-project";
 const multer = require('multer');
-const fs = require('fs');
+var fs = require('fs');
+var path = require('path');
+var mongo = require('mongodb');
+const resMsg = require('../config/message');
+const newsModel = require('../server/project/service/management/models/newsModel');
+const secretKey = "MFII-project";
 
-exports.verifyTokenAndRole = function(role){
-    return function(request, response, next) {
+// verify user role
+exports.verifyTokenAndRole = function (role) {
+    return function (request, response, next) {
         const token = request.headers.authorization;
         if (!token) {
-            return response.status(401).json({resutl: {}, description: resMsg.getMsg(40102)});
+            return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40107) });
         }
         jwt.verify(token, secretKey, (err, decoded) => {
             if (err) {
-                return response.status(401).json({resutl: {}, description: resMsg.getMsg(40102)});
+                return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40102) });
             }
-            if(decoded.role != role){
-                return response.status(401).json({resutl: {}, description: resMsg.getMsg(40103)})
+            if (decoded.role != role) {
+                return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40103) })
             }
             request.userId = decoded.userId;
             next();
         });
     }
-}
+};
+
+// delete file path on local device
+exports.deleteFile = async function (request, response, next) {
+    try {
+        const query = { _id: new mongo.ObjectId(request.params.id) };
+        const news = await newsModel.findById(query._id);
+        if (!news) {
+            return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
+        }
+        // Delete the image file
+        if (news.imagePath) {
+            news.imagePath.forEach(file => {
+                const filePath = path.join(__dirname, '../' + file);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                    }
+                });
+            });
+            next(); // Proceed to the next middleware
+        } else {
+            next(); // If no imagePath, proceed to the next middleware
+        }
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
 
 // Function to determine the destination folder for each file
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let uploadDirectory;
-        console.log(file);
         // Check the file type
         if (file.mimetype.startsWith('image')) {
             uploadDirectory = 'uploads/image';
@@ -35,13 +71,6 @@ const storage = multer.diskStorage({
             uploadDirectory = 'uploads/pdf';
         } else {
             uploadDirectory = 'uploads/others';
-        }
-
-        // Construct the directory path
-
-        // Create the folder if it doesn't exist
-        if (!fs.existsSync(uploadDirectory)) {
-            fs.mkdirSync(uploadDirectory, { recursive: true });
         }
 
         // Set the upload folder as the destination
@@ -52,4 +81,8 @@ const storage = multer.diskStorage({
     }
 });
 
-exports.upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage
+});
+
+exports.upload = upload;
