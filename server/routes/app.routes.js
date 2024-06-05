@@ -17,7 +17,7 @@ var middleware = require("../../helpers/middleware");
   //========== all user can use ==========\\
   app.post("/login", userManagement.loginUserServices); //all user can login
   app.post("/register", userManagement.createUserService); //default role of register is "user", but if admin add staff must add role to "staff"
-
+  app.get("/getUser/:id", userManagement.getUserServices); //get detail of each user
   //========== login user can use ==========\\
   app.patch(userPath + "/updatePatch", middleware.verifyTokenAndRole("user"), userManagement.updateUserServices); //user update data itself use Patch
   
@@ -25,7 +25,6 @@ var middleware = require("../../helpers/middleware");
 
   //========== admin use only ==========\\
   app.get(adminPath + "/getsUser", middleware.verifyTokenAndRole("admin"), userManagement.getsUserServices); //admin get all user data
-  app.get(adminPath + "/getUser/:id", middleware.verifyTokenAndRole("admin"), userManagement.getUserServices); //admin get detail of each user
   app.delete(adminPath + '/deleteUser/:id', middleware.verifyTokenAndRole("admin"), userManagement.deleteStaffServices);// admin delete staff
   app.patch(adminPath + "/updatePatch/:id", middleware.verifyTokenAndRole("admin"), userManagement.updateStaffServices);// admin update staff use Patch
   
