@@ -42,7 +42,7 @@ module.exports = function () {
       app.use(cookieParser());
       app.use(xssFilter());
       // app.use(validator());
-
+      app.use('/uploads', express.static('uploads'));
       app.use(sass({src: "./sass", dest: "./public/css", debug: true, outputStyle: "compressed",}));
       app.use(express.static(path.join(__dirname, "./public")));
       app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));

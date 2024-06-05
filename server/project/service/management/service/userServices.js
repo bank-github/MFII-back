@@ -75,7 +75,7 @@ exports.deleteStaffServices = async function (request, response, next) {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
         // query._id = new mongo.ObjectId(request.body.id);
-        const doc = await userController.deleteUserContoller(query);
+        const doc = await userController.deleteStaffContoller(query);
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {

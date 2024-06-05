@@ -1,4 +1,5 @@
 var userManagement = require("../project/service/management/service/userServices");
+var newsManagement = require("../project/service/management/service/newsServices")
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -29,8 +30,11 @@ var middleware = require("../../helpers/middleware");
   app.patch(adminPath + "/updatePatch/:id", middleware.verifyTokenAndRole("admin"), userManagement.updateStaffServices);// admin update staff use Patch
   
 
-
-
+  //New api dev
+  app.post("/addNews", middleware.upload.any(), newsManagement.addNewsServices);// add news and image
+  app.get("/getsNews",newsManagement.getsNewsServices);// get all news
+  app.get("/getNews/:id",newsManagement.getNewsServices);// get specific news via id
+  app.delete("/deleteNews/:id", middleware.deleteFile, newsManagement.deleteNewsServices);// delete specific news and delete image
   //
   //
   //   // end Package Marketplace

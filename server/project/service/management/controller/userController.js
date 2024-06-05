@@ -100,7 +100,6 @@ exports.getUserController = async function (query) {
     });
 };
 exports.deleteStaffContoller = async function (query) {
-
     return new Promise((resolve, reject) => {
         userModel
             .findOneAndDelete(query)
