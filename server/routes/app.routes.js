@@ -20,8 +20,10 @@ var mesManagement = require("../project/service/management/service/messageServic
   app.get(userPath + "/gets", userManagement.getUserServices);
 
   //message path
-  app.post("/mes-request", mesManagement.createRequestService);
-  app.get("/mes-get", mesManagement.getRequestService);
+  app.post("/mesRequest", mesManagement.createRequestService);
+  app.get("/mesGetData", mesManagement.getRequestService);
+  app.patch("/mesUpdate/:id", mesManagement.updateRequestService);
+  app.delete("/mesDelete/:id", mesManagement.deleteRequestService);
 
 
 

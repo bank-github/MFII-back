@@ -30,7 +30,7 @@ exports.getRequestController = async function () {
                         Scope: 1,
                         email: '$user_info.email',       // Flatten the user_info fields
                         firstName: '$user_info.firstName',
-                        lastName: '$user_info.lastName'
+                        lastName: '$user_info.lastName',
                     }
                 }
             ])
@@ -50,24 +50,25 @@ exports.getRequestController = async function () {
     });
 }
 
-exports.onQuerys = async function (query) {
-    return new Promise((resolve, reject) => {
-        messageModel
-            .find(query)
-            .sort({ _id: -1 })
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
-            .lean()
-            .exec().then(doc => {
-                resolve(doc);
-            }).catch(err => {
-                reject(err);
-            });
-    });
-}
+// exports.onQuerys = async function (query) {
+//     return new Promise((resolve, reject) => {
+//         messageModel
+//             .find(query)
+//             .sort({ _id: -1 })
+//             .populate([
+//                 // {path : "address.province"},
+//                 // {path : "address.district"},
+//                 // {path : "bankInfo.bankName"}
+//             ])
+//             .lean()
+//             .exec().then(doc => {
+//                 resolve(doc);
+//             }).catch(err => {
+//                 reject(err);
+//             });
+//     });
+// }
+
 exports.createRequestController = async function (data) {
     return new Promise((resolve, reject) => {
         var messageModels = new messageModel(data);
@@ -81,33 +82,41 @@ exports.createRequestController = async function (data) {
         });
     });
 }
-exports.onUpdate = async function (query, data) {
+
+exports.updateRequestController = async (query, data) => {
     return new Promise((resolve, reject) => {
-        messageModel
-            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: true })
-            .populate([
-                // {path : "address.province"},
-                // {path : "address.district"},
-                // {path : "bankInfo.bankName"}
-            ])
-            .lean()
-            .exec().then(doc => {
-                resolve(doc);
-            }).catch(err => {
-                reject(err);
+        messageModel.findByIdAndUpdate(query, data, { new: true })
+            .then(updatedRequest => {
+                if (!updatedRequest) {
+                reject({ error: {}, code: { codeNO: 404, description: 40402 } });
+                }
+                var resInfo = { result: updatedRequest, code: { codeNO: 200, description: 20000 } };
+                resolve(resInfo);
+            })
+            .catch(error => {
+                console.error('Error in updateRequestController:', error);
+                var rejInfo = { error: error, code: { codeNO: 500, description: 50000 } };
+                reject(rejInfo);
             });
     });
-}
-exports.onDelete = async function (query) {
+};
 
+exports.deleteRequestController = async function (query) {
     return new Promise((resolve, reject) => {
-        messageModel
-            .remove(query)
-            .lean()
-            .exec().then(doc => {
-                resolve(doc);
+        var messageModels = new messageModel(query);
+        messageModels
+            .deleteOne(query)
+            .exec()
+            .then(result => {
+                if (result.deletedCount === 0) {
+                    var rejInfo = { error: {} , code: { codeNO: 404, description: 40402 } };
+                    return reject(rejInfo);
+                }
+                var resInfo = { result: result, code: { codeNO: 200, description: 200 } };
+                resolve(resInfo);
             }).catch(err => {
-                reject(err);
+                var rejInfo = { error: err, code: { codeNO: 500, description: 50005 } };
+                reject(rejInfo);
             });
     });
 }

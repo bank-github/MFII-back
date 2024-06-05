@@ -3,22 +3,6 @@ var messageController = require('../controller/messageController');
 var resMsg = require('../../../../../config/message');
 const { ObjectId } = require('mongodb');
 
-exports.onQuery = async function (request, response, next) {
-    try {
-
-        var querys = {};
-        const doc = await messageController.onQuery(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
-    } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
-    }
-};
-
 exports.getRequestService = async function (request, response, next) {
     try {
 
@@ -37,6 +21,23 @@ exports.getRequestService = async function (request, response, next) {
         }
     }
 };
+
+
+// exports.onQuery = async function (request, response, next) {
+//     try {
+
+//         var querys = {};
+//         const doc = await messageController.onQuery(querys);
+
+//         var resData = await resMsg.onMessage_Response(0,20000);
+//         resData.data = doc;
+//         response.status(200).json(resData);
+
+//     } catch (err) {
+//         var resData = await resMsg.onMessage_Response(0,40400);
+//         response.status(404).json(resData);
+//     }
+// };
 
 exports.createRequestService = async function (request, response, next) {
     try {
@@ -63,43 +64,48 @@ exports.createRequestService = async function (request, response, next) {
     }
 };
 
-exports.onUpdate = async function (request, response, next) {
+exports.updateRequestService = async function (request, response, next) {
     try {
+        const query = {};
+        query._id = new mongo.ObjectId(request.params.id);
 
-        var query = {};
-        query._id = new mongo.ObjectId(request.body._id);
-
-        const doc = await messageController.onUpdate(query,request.body);
-
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
+        const doc = await messageController.updateRequestController(query, request.body);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
+    
     } catch (err) {
-        
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code) {
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onDelete = async function (request, response, next) {
+
+
+
+exports.deleteRequestService = async function (request, response, next) {
     try {
+        //หาไอดั user
+        const query = {};
+        query._id = new mongo.ObjectId(request.params.id);
 
-        var query = {};
-        query._id = new mongo.ObjectId(request.body.id);
-        const doc = await messageController.onDelete(query);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        // Delete data
+        const doc = await messageController.deleteRequestController(query);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
-
 };
+
+
+
 exports.onMessage_Response = async function (number, code, res) {
     try {
 
