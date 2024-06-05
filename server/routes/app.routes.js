@@ -29,8 +29,9 @@ var middleware = require("../../helpers/middleware");
   app.put(adminPath + "/updatePut", middleware.verifyTokenAndRole("admin"), userManagement.updateUserPutServices);
 
 
-
-
+  app.post('/upload',middleware.upload.array('files'), (req, res) => {
+    res.send('Files uploaded successfully');
+});
 
 //
 //
