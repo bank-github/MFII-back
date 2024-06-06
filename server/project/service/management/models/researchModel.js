@@ -4,20 +4,18 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var researchModel = new Schema({
-    title           : [{
-        key            : {type: String, default: null},
-        value          : {type: String, default: null},
-    }],
-    description     : [{
-        key            : {type: String, default: null},
-        value          : {type: String, default: null},
-    }],
-    state           : {type: Boolean, default: true},
-    create          : {
-        by              : {type: Schema.ObjectId, ref: 'Infomation_Admins'},
-        datetime        : {type: Date, default: Date.now}
-    },
-
+    filePath        : { type: [String], required: true },
+    industryType    : { type: String, required: true },
+    intelProp       : { type: String, required: true },
+    techReadiness   : { type: String, required: true },
+    name            : { type: String, required: true },
+    inventor        : { type: String, required: true },
+    major           : { type: String, required: true },
+    description     : { type: String, required: true },
+    highlight       : { type: [String], required: true },
+    coop            : { type: [String], required: true },
+    link            : { type: String, required: true },
+    status          : { type: Number, required: true },
 });
 
 var research = mongoose.model('research', researchModel, 'research');
