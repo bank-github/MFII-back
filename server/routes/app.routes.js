@@ -24,7 +24,7 @@ var middleware = require("../../helpers/middleware");
   app.get("/getUser/:id", userManagement.getUserServices); //get detail of each user
 
   // //========== login user can use ==========\\
-  // app.patch(userPath + "/updatePatch", middleware.verifyTokenAndRole("user"), userManagement.updateUserServices); //user update data itself use Patch
+  app.patch(userPath + "/updatePatch", middleware.verifyTokenAndRole("user"), userManagement.updateUserServices); //user update data itself use Patch
 
   // //========== staff can use ==========\\
 
