@@ -24,9 +24,15 @@ exports.createUserController = async function (data) {
                             var userData = new userModel(data);
                             //add data to database
                             userData.save()
-                                .then(() => {
-                                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
-                                    resolve(resInfo);
+                                .then((doc) => {
+                                    if (doc.role != "user") {
+                                        var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
+                                        resolve(resInfo);
+                                    } else {
+                                        const token = jwt.sign({ userId: doc._id, role: doc.role }, secretKey, { expiresIn: '1h' });
+                                        var resInfo = { result: {token: token}, code: { codeNo: 200, description: 20000 } };
+                                        resolve(resInfo);
+                                    }
                                 }).catch(err => {
                                     var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
                                     reject(resInfo);
@@ -131,12 +137,12 @@ exports.updateUserController = async function (query, data) {
     return new Promise((resolve, reject) => {
         userModel
             // find data and update with sent docUpdate data not original and when not found no add data
-            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: false }, { password: 0 })
+            .findOneAndUpdate(query, data, { new: true, returnOriginal: false, upsert: false })
             .then(doc => {
                 // if can find and update data
                 if (doc) {
                     // assign newDoc to keep data without password, role, __v
-                    const { password, role, __v, ...newDoc } = doc.toObject();
+                    const {password, role, __v, status, createDate, ...newDoc } = doc.toObject();
                     var resInfo = { result: newDoc, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
