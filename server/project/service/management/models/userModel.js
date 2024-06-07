@@ -8,8 +8,10 @@ var userModel = new Schema({
      password        : {type: String, require: true},
      firstName       : {type: String, require: true},
      lastName        : {type: String, require: true},
-     PhoneNumber     : {type: String, require: true},
+     phoneNumber     : {type: String, require: true},
      role            : {type: String, require: true, default: "user"}, //or number 0=user, 1=staff, 2=admin
+     createDate      : {type: Date, require: true},
+     status          : {type: String, require: true, default: "active"}
 });
 
 var user = mongoose.model('user', userModel, 'user');

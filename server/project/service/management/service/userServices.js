@@ -20,14 +20,15 @@ exports.createUserService = async function (request, response, next) {
 };
 exports.loginUserServices = async function (request, response, next) {
     try {
+        // find only user have status active
+        var data = {query:{email: request.body.email, status: "active"}, password: request.body.password};
         // data on body only email & password
         // wait controller login
-        const doc = await userController.loginUserController(request.body);
+        const doc = await userController.loginUserController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
         if (err.code != null) {
-            console.log(err.error)
             response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
         } else {
             console.log(err);
@@ -37,9 +38,13 @@ exports.loginUserServices = async function (request, response, next) {
 };
 exports.getsUserServices = async function (request, response, next) {
     try {
-        console.log(request.userId);
+        var query = {};
+        var roles = request.body.role;
+        if(roles){
+            query = {role: {$in: roles}};
+        }
         // no query because get all user
-        const doc = await userController.getUserController();
+        const doc = await userController.getsUserController(query);
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
