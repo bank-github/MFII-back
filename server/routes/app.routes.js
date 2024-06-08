@@ -1,5 +1,6 @@
 var userManagement = require("../project/service/management/service/userServices");
 var newsManagement = require("../project/service/management/service/newsServices")
+var researchManagement = require("../project/service/management/service/researchServices")
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -35,6 +36,12 @@ var middleware = require("../../helpers/middleware");
   app.get("/getsNews",newsManagement.getsNewsServices);// get all news
   app.get("/getNews/:id",newsManagement.getNewsServices);// get specific news via id
   app.delete("/deleteNews/:id", middleware.deleteFile, newsManagement.deleteNewsServices);// delete specific news and delete image
+
+  //Research api
+  app.post("/addResearch", middleware.upload.any(), researchManagement.addResearchServices);// add research and image
+  app.get("/getsResearch",researchManagement.getsResearchServices); //get all research
+  app.get("/getResearch/:id",researchManagement.getResearchServices); //get specific research
+  
   //
   //
   //   // end Package Marketplace

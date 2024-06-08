@@ -1,88 +1,72 @@
 var mongo = require('mongodb');
 var researchController = require('../controller/researchController');
+var resMsg = require('../../../../../config/message');
 
-exports.onQuery = async function (request, response, next) {
+exports.getResearchServices = async function (request, response, next) {
     try {
-
-        var querys = {};
-        const doc = await researchController.onQuery(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
-    } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
-    }
-};
-exports.onQuerys = async function (request, response, next) {
-    try {
-
-        var querys = {};
-
-        const doc = await researchController.onQuerys(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
-    } catch (err) {
-        console.log(err);
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
-    }
-};
-exports.onCreate = async function (request, response, next) {
-    try {
-        const doc = await researchController.onCreate(request.body);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
-    } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
-    }
-};
-exports.onUpdate = async function (request, response, next) {
-    try {
-
         var query = {};
-        query._id = new mongo.ObjectId(request.body._id);
-
-        const doc = await researchController.onUpdate(query,request.body);
-
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
+        query._id = new mongo.ObjectId(request.params.id);
+        const doc = await researchController.getResearchController(query);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
-        
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onDelete = async function (request, response, next) {
+exports.getsResearchServices = async function (request, response, next) {
     try {
-
-        var query = {};
-        query._id = new mongo.ObjectId(request.body.id);
-        const doc = await researchController.onDelete(query);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        const doc = await researchController.getsResearchController();
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+exports.addResearchServices = async function (request, response, next) {
+    try {
+        var data = 
+        { 
+            filePath: [],
+            industryType    : request.body.industryType,
+            intelProp       : request.body.intelProp,
+            techReadiness   : request.body.techReadiness,
+            name            : request.body.name,
+            inventor        : request.body.inventor,
+            major           : request.body.major,
+            description     : request.body.description,
+            highlight       : JSON.parse(request.body.highlight),
+            coop            : JSON.parse(request.body.coop),
+            link            : request.body.link,
+            status          : Number(request.body.status)
+        };
+        //add all image path to array
+        request.files.forEach(file => {
+            data.filePath.push(file.path);
+        });
+        const doc = await researchController.addResearchController(data);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
     }
-
 };
+
 exports.onMessage_Response = async function (number, code, res) {
     try {
 
