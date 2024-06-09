@@ -41,7 +41,7 @@ var middleware = require("../../helpers/middleware");
   app.post("/addResearch", middleware.upload.any(), researchManagement.addResearchServices);// add research and image
   app.get("/getsResearch",researchManagement.getsResearchServices); //get all research
   app.get("/getResearch/:id",researchManagement.getResearchServices); //get specific research
-  
+  app.delete("/deleteResearch/:model/:id", middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
   //
   //
   //   // end Package Marketplace

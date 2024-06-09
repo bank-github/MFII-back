@@ -45,6 +45,25 @@ exports.addResearchController = async function (data) {
             });
     });
 }
+exports.deleteResearchController = async function (query) {
+    return new Promise((resolve, reject) => {
+        researchModel
+            .findOneAndDelete(query)
+            .then(deleteResearch => {
+                // find Research and delete
+                if (deleteResearch) {
+                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                //no Research in database
+                else {
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+}
 
 
 
