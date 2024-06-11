@@ -53,40 +53,17 @@ exports.getRequestController = async function () {
     });
 }
 
-exports.getMesController = async function (messageReplyId) {
+exports.getMessageReplyController = async function (messageId) {
     return new Promise((resolve, reject) => {
-        messageModel
-            .aggregate([
-                {
-                    $match: { messageReply: new mongoose.Types.ObjectId(messageReplyId) }
-                },
-                {
-                    $lookup: {
-                        from: 'user',
-                        localField: 'userId',
-                        foreignField: '_id',
-                        as: 'user_info'
-                    }
-                },
-                {
-                    $unwind: '$user_info'
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        messageReply: 1,
-                        messages: 1,
-                        newMessage:1,
-                    }
-                }
-            ])
-            .exec()
+        console.log("Mes ID: ", messageId);
+        messageModel.findById(messageId)
+            .populate('messageReply.userId', 'messages')
             .then(doc => {
-                if (doc == null || doc.length === 0) {
-                    var rejInfo = { error: "No message found", code: { codeNO: 404, description: 40401 } };
+                if (doc == null) {
+                    var rejInfo = { error: 'Message not found', code: { codeNO: 404, description: 40401 } };
                     reject(rejInfo);
                 } else {
-                    var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
+                    var resInfo = { result: doc.messageReply, code: { codeNO: 200, description: 200 } };
                     resolve(resInfo);
                 }
             }).catch(err => {
@@ -95,29 +72,6 @@ exports.getMesController = async function (messageReplyId) {
             });
     });
 };
-
-exports.updateMesController = async function (messageReplyId, newMessage) {
-    return new Promise((resolve, reject) => {
-        messageModel.findOneAndUpdate(
-            { messageReply: new mongoose.Types.ObjectId(messageReplyId) },
-            { $set: { newMessage: newMessage } },
-            { new: true }
-        ).exec().then(doc => {
-            if (doc == null) {
-                var rejInfo = { error: "No message found", code: { codeNO: 404, description: 40401 } };
-                reject(rejInfo);
-            } else {
-                var resInfo = { result: [doc], code: { codeNO: 200, description: 200 } };
-                resolve(resInfo);
-            }
-        }).catch(err => {
-            var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } };
-            reject(rejInfo);
-        });
-    });
-};
-
-
 
 
 
@@ -140,6 +94,29 @@ exports.updateMesController = async function (messageReplyId, newMessage) {
 //             });
 //     });
 // }
+
+
+exports.updateMessageReplyController = async function (messageId, messageReplyData) {
+    return new Promise((resolve, reject) => {
+        console.log("Mes ID: ", messageId);
+        messageModel.findByIdAndUpdate(
+            messageId,
+            { $push: { messageReply: messageReplyData } },
+            { new: true}
+        ).then(doc => {
+            if (!doc) {
+                var rejInfo = { error: 'Message not found', code: { codeNO: 404, description: 'Message not found' } };
+                reject(rejInfo);
+            } else {
+                var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
+                resolve(resInfo);
+            }
+        }).catch(err => {
+            var rejInfo = { error: err, code: { codeNO: 500, description: 50003 } };
+            reject(rejInfo);
+        });
+    });
+}
 
 exports.createRequestController = async function (data) {
     return new Promise((resolve, reject) => {

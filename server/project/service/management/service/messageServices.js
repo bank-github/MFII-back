@@ -1,5 +1,6 @@
 var mongo = require('mongodb');
 var messageController = require('../controller/messageController');
+var messageModel = require('../models/messageModel');
 var resMsg = require('../../../../../config/message');
 const { ObjectId } = require('mongodb');
 
@@ -22,55 +23,12 @@ exports.getRequestService = async function (request, response, next) {
     }
 };
 
-exports.getMesService = async function (request, response, next) {
+exports.getMessageReplyService = async function (request, response, next) {
     try {
-        const messageReplyId = request.params.id;  
-        const doc = await messageController.getMesController(messageReplyId);
-        if (!doc.result || doc.result.length === 0) {
-            response.status(404).json({
-                result: "No messages found",
-                detail: resMsg.getMsg(40401)
-            });
-        } else {
-            response.status(doc.code.codeNO).json({
-                messages: doc.result.map(item => ({
-                    messageReply: item.messageReply,
-                    messages: item.messages,
-                    newMessage:item.newMessage,
-                }))
-            });
-        }
-    } catch (err) {
-        if (err.code != null) {
-            console.log(err.error);
-            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
-        } else {
-            console.log(err);
-            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
-        }
-    }
-};
+        const messageId = request.params.id;
 
-exports.updateMesService = async function (request, response, next) {
-    try {
-        const messageReplyId = request.params.id;
-        const newMessage = request.body.newMessage;
-        const doc = await messageController.updateMesController(messageReplyId, newMessage);
-        
-        if (!doc.result || doc.result.length === 0) {
-            response.status(404).json({
-                result: "No messages found",
-                detail: resMsg.getMsg(40401)
-            });
-        } else {
-            response.status(doc.code.codeNO).json({
-                messages: doc.result.map(item => ({
-                    messageReply: item.messageReply,
-                    messages: item.messages,
-                    newMessage: item.newMessage 
-                }))
-            });
-        }
+        const doc = await messageController.getMessageReplyController(messageId);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error);
@@ -83,10 +41,23 @@ exports.updateMesService = async function (request, response, next) {
 };
 
 
+exports.updateMessageReplyService = async function (request, response, next) {
+    try {
+        const messageId = request.params.id;
+        const messageReplyData = request.body;
 
-
-
-
+        const doc = await messageController.updateMessageReplyController(messageId, messageReplyData);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
+    }
+};
 // exports.onQuery = async function (request, response, next) {
 //     try {
 
