@@ -35,13 +35,16 @@ var middleware = require("../../helpers/middleware");
   app.post("/addNews", middleware.upload.any(), newsManagement.addNewsServices);// add news and image
   app.get("/getsNews",newsManagement.getsNewsServices);// get all news
   app.get("/getNews/:id",newsManagement.getNewsServices);// get specific news via id
-  app.delete("/deleteNews/:id", middleware.deleteFile, newsManagement.deleteNewsServices);// delete specific news and delete image
+  app.delete("/deleteNews/:id", middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
 
   //Research api
   app.post("/addResearch", middleware.upload.any(), researchManagement.addResearchServices);// add research and image
   app.get("/getsResearch",researchManagement.getsResearchServices); //get all research
   app.get("/getResearch/:id",researchManagement.getResearchServices); //get specific research
   app.delete("/deleteResearch/:model/:id", middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
+  app.patch("/deleteFileResearch/:model/:id",middleware.deleteFileSome,researchManagement.deleteFileResearchServices);
+  app.patch("/addFileResearch/:id",middleware.upload.any(),researchManagement.addFileResearchServices);
+  
   //
   //
   //   // end Package Marketplace

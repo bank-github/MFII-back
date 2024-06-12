@@ -82,3 +82,38 @@ exports.deleteResearchServices = async function (request, response, next) {
         }
     }
 };
+exports.deleteFileResearchServices = async function (request, response, next) {
+    try {
+        var query = { _id: new mongo.ObjectId(request.params.id) };
+        var update = { $pull: { filePath: request.body.filePath } };
+        const doc = await researchController.updateFileResearchController(query,update);
+        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+exports.addFileResearchServices = async function (request, response, next) {
+    try {
+        var query = { _id: new mongo.ObjectId(request.params.id) };
+        var update = { $push: { filePath: [] } };
+        request.files.forEach(file => {
+            update.$push.filePath.push(file.path); // Push each file's path to the update object
+        });
+        const doc = await researchController.updateFileResearchController(query,update);
+        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};

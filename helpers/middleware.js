@@ -4,7 +4,6 @@ var fs = require('fs');
 var path = require('path');
 var mongo = require('mongodb');
 const resMsg = require('../config/message');
-const newsModel = require('../server/project/service/management/models/newsModel');
 const secretKey = "MFII-project";
 
 const models = {
@@ -30,39 +29,6 @@ exports.verifyTokenAndRole = function (role) {
             request.userId = decoded.userId;
             next();
         });
-    }
-};
-
-// delete file path on local device
-exports.deleteFile = async function (request, response, next) {
-    try {
-        const query = { _id: new mongo.ObjectId(request.params.id) };
-        const news = await newsModel.findById(query._id);
-        if (!news) {
-            return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
-        }
-        // Delete the image file
-        if (news.imagePath) {
-            news.imagePath.forEach(file => {
-                const filePath = path.join(__dirname, '../' + file);
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-                    }
-                });
-            });
-            next(); // Proceed to the next middleware
-        } else {
-            next(); // If no imagePath, proceed to the next middleware
-        }
-    } catch (err) {
-        if (err.code != null) {
-            console.log(err.error)
-            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
-        } else {
-            console.log(err);
-            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-        }
     }
 };
 
@@ -105,6 +71,51 @@ exports.deleteFileDynamic = async function (request, response, next) {
         }
     }
 };
+
+// delete file path on local device
+exports.deleteFileSome = async function (request, response, next) {
+    try {
+        const modelName = request.params.model;
+        const Model = models[modelName];
+
+        if (!request.body.filePath) {
+            return response.status(400).json({ result: {}, description: "Invalid file" });
+        }
+
+        if (!Model) {
+            return response.status(400).json({ result: {}, description: "Invalid model" });
+        }
+        const query = { _id: new mongo.ObjectId(request.params.id) };
+        
+        const document = await Model.findById(query._id);
+        if (!document) {
+            return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
+        }
+
+        // Delete the file
+        if (document.filePath) {
+                const filePath = request.body.filePath;
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                    }
+                    next();
+                });
+        }else {
+            // If document.filePath is falsy, you might want to handle this case accordingly
+            response.status(404).json({ result: {}, description: "File path not found" });
+        }
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+
 
 // Function to determine the destination folder for each file
 const storage = multer.diskStorage({
