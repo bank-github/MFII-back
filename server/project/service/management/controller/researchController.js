@@ -83,6 +83,25 @@ exports.updateFileResearchController = async function (query,update) {
             });
     });
 }
+exports.updateDataResearchController = async function (query,update) {
+    return new Promise((resolve, reject) => {
+        researchModel
+        .findByIdAndUpdate(query._id, update, { new: true })
+            .then(updateResearch => {
+                // find Research and delete
+                if (updateResearch) {
+                    var resInfo = { result: {updateResearch}, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                //no Research in database
+                else {
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+}
 
 
 

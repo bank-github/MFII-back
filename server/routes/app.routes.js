@@ -44,7 +44,7 @@ var middleware = require("../../helpers/middleware");
   app.delete("/deleteResearch/:model/:id", middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
   app.patch("/deleteFileResearch/:model/:id",middleware.deleteFileSome,researchManagement.deleteFileResearchServices);
   app.patch("/addFileResearch/:id",middleware.upload.any(),researchManagement.addFileResearchServices);
-  
+  app.patch("/updateResearchData/:id",researchManagement.updateDataResearchServices);
   //
   //
   //   // end Package Marketplace
