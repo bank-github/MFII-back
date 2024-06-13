@@ -9,7 +9,7 @@ var userModel = new Schema({
      firstName       : {type: String, require: true},
      lastName        : {type: String, require: true},
      phoneNumber     : {type: String, require: true},
-     role            : {type: String, require: true, default: "user"}, //or number 0=user, 1=staff, 2=admin
+     role            : {type: String, require: true, default: "user"},
      createDate      : {type: Date, require: true},
      status          : {type: String, require: true, default: "active"}
 });
