@@ -4,7 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var mongo = require('mongodb');
 const resMsg = require('../config/message');
-const secretKey = "MFII-project";
+const secretKey = "MFII-project-2023";
 
 const models = {
     news: require('../server/project/service/management/models/newsModel'),
@@ -32,6 +32,27 @@ exports.verifyTokenAndRole = function (role) {
     }
 };
 
+//verify role for frontend
+exports.verify = function (request, response) {
+    const token = request.headers.authorization;
+    if (!token) {
+        return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40107) });
+    }
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40102) });
+        }
+        if (decoded.role == "admin") {
+            return response.status(200).json({ resutl: { number: 0 }, description: resMsg.getMsg(20000) })
+        }
+        else if (decoded.role == "staff") {
+            return response.status(200).json({ resutl: { number: 1 }, description: resMsg.getMsg(20000) })
+        }
+        else {
+            return response.status(200).json({ resutl: { number: 2 }, description: resMsg.getMsg(20000) })
+        }
+    });
+};
 // delete file path on local device
 exports.deleteFileDynamic = async function (request, response, next) {
     try {
