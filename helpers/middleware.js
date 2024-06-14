@@ -4,8 +4,21 @@ var fs = require('fs');
 var path = require('path');
 var mongo = require('mongodb');
 const resMsg = require('../config/message');
-const newsModel = require('../server/project/service/management/models/newsModel');
+const models = {
+    news: require('../server/project/service/management/models/newsModel'),
+    research: require('../server/project/service/management/models/researchModel')
+    //add other model
+};
 const secretKey = "MFII-project";
+
+// Test Generate a JWT token
+const payload = {
+    userId: 'testUserId',
+    role: 'staff' // Change this to 'user', 'admin', etc., for different roles
+};
+// JWT token expires in 1 hour
+const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+console.log('JWT Token:', token);
 
 // verify user role
 exports.verifyTokenAndRole = function (role) {
@@ -26,18 +39,49 @@ exports.verifyTokenAndRole = function (role) {
         });
     }
 };
-
-// delete file path on local device
-exports.deleteFile = async function (request, response, next) {
+// get news by id with token
+exports.getNewsByIdService = async function (request, response, next) {
     try {
+        const modelName = request.params.model;
+        const Model = models[modelName];
+        if (!Model) {
+            return response.status(400).json({ result: {}, description: "Invalid model" });
+        }
         const query = { _id: new mongo.ObjectId(request.params.id) };
-        const news = await newsModel.findById(query._id);
-        if (!news) {
+
+        const document = await Model.findById(query._id);
+        if (!document) {
             return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
         }
-        // Delete the image file
-        if (news.imagePath) {
-            news.imagePath.forEach(file => {
+        next(); // Proceed to the next middleware
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+// delete file path on local device
+exports.deleteFileDynamic = async function (request, response, next) {
+    try {
+        const modelName = request.params.model;
+        const Model = models[modelName];
+        if (!Model) {
+            return response.status(400).json({ result: {}, description: "Invalid model" });
+        }
+        const query = { _id: new mongo.ObjectId(request.params.id) };
+
+        const document = await Model.findById(query._id);
+        if (!document) {
+            return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
+        }
+
+        // Delete the file
+        if (document.filePath) {
+            document.filePath.forEach(file => {
                 const filePath = path.join(__dirname, '../' + file);
                 fs.unlink(filePath, (err) => {
                     if (err) {
@@ -77,7 +121,9 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '_' + file.originalname);
+        // Remove any invalid characters from the original filename
+        const safeFilename = file.originalname.replace(/[^\w.-]/g, '');
+        cb(null, Date.now() + '' + safeFilename);
     }
 });
 
