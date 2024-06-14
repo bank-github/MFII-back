@@ -21,8 +21,30 @@ const models = {
 // const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
 // console.log('JWT Token:', token);
 
+//verify role for frontend
+exports.verify = function (request, response) {
+    const token = request.headers.authorization;
+    if (!token) {
+        return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40107) });
+    }
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40102) });
+        }
+        if (decoded.role == "admin") {
+            return response.status(200).json({ resutl: { number: 0 }, description: resMsg.getMsg(20000) })
+        }
+        else if (decoded.role == "staff") {
+            return response.status(200).json({ resutl: { number: 1 }, description: resMsg.getMsg(20000) })
+        }
+        else {
+            return response.status(200).json({ resutl: { number: 2 }, description: resMsg.getMsg(20000) })
+        }
+    });
+};
+
 // verify user role
-exports.verifyTokenAndRole = function (role) {
+exports.verifyTokenAndRole = function (roles) {
     return function (request, response, next) {
         const token = request.headers.authorization;
         if (!token) {
@@ -32,7 +54,7 @@ exports.verifyTokenAndRole = function (role) {
             if (err) {
                 return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40102) });
             }
-            if (decoded.role != role) {
+            if (!roles.includes(decoded.role)) {
                 return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40103) })
             }
             request.userId = decoded.userId;

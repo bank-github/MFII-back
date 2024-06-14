@@ -26,9 +26,8 @@ var middleware = require("../../helpers/middleware");
   app.get("/getUser/:id", userManagement.getUserServices); //get detail of each user
   app.get("/getsResearch", researchManagement.getsResearchServices); //get all research
   app.get("/getResearch/:id", researchManagement.getResearchServices); //get specific research
+  app.get("/getsNews", newsManagement.getsNewsServices);// get all news
 
-  app.post("/mesRequest", mesManagement.createRequestService);
-  
   // //========== login user can use ==========\\
   app.patch(userPath + "/updatePatch", middleware.verifyTokenAndRole("user"), userManagement.updateUserServices); //user update data itself use Patch
   app.post(userPath + "/mesRequest", middleware.verifyTokenAndRole("user"), mesManagement.createRequestService); //user make request to staff
@@ -39,26 +38,21 @@ var middleware = require("../../helpers/middleware");
   app.patch(staffPath + "/deleteFileResearch/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileSome, researchManagement.deleteFileResearchServices);
   app.patch(staffPath + "/addFileResearch/:id", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), researchManagement.addFileResearchServices);
   app.patch(staffPath + "/updateResearchData/:id", middleware.verifyTokenAndRole("staff"), researchManagement.updateDataResearchServices);
-
+  app.post(staffPath + "/addNews", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
+  app.get(staffPath + "/getNews/:id", middleware.verifyTokenAndRole("staff"), newsManagement.getNewsByIdService);// get specific news via id
+  app.delete(staffPath + "/deleteNews/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
+  
   // //========== admin use only ==========\\
   app.get(adminPath + "/getsUser", middleware.verifyTokenAndRole("admin"), userManagement.getsUserServices); //admin get all or some user data [specific role]
   app.delete(adminPath + '/deleteUser/:id', middleware.verifyTokenAndRole("admin"), userManagement.deleteStaffServices);// admin delete staff
   app.patch(adminPath + "/updatePatch/:id", middleware.verifyTokenAndRole("admin"), userManagement.updateStaffServices);// admin update staff use Patch
 
-  
-  //message path get
-  app.get("/mesGetData", mesManagement.getRequestService);
-  app.get("/mesGetReply/:id", mesManagement.getMessageReplyService);
-  //message path patch
-  app.patch('/mesReplyUpdate/:id', mesManagement.updateMessageReplyService);
-  app.patch("/mesUpdate/:id", mesManagement.updateRequestService);
-  app.delete("/mesDelete/:id", mesManagement.deleteRequestService);
-
-  // //New api dev
-  // app.post("/addNews", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
-  // app.get("/getsNews", newsManagement.getsNewsServices);// get all news
-  // app.get("/getNews/:id",  middleware.verifyTokenAndRole("staff"), newsManagement.getNewsByIdService);// get specific news via id
-  // app.delete("/deleteNews/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
+  // //========== login user and staff can use ==========\\
+  app.get("/mesGetData", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.getRequestService);
+  app.get("/mesGetReply/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.getMessageReplyService);
+  app.patch('/mesReplyUpdate/:id', middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.updateMessageReplyService);
+  app.patch("/mesUpdate/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.updateRequestService);
+  app.delete("/mesDelete/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.deleteRequestService);
 };
 
 
