@@ -2,7 +2,7 @@ var mongo = require('mongodb');
 var newsController = require('../controller/newsController');
 var resMsg = require('../../../../../config/message');
 
-exports.getNewsServices = async function (request, response, next) {
+exports.getNewsByIdService = async function (request, response, next) {
     try {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
@@ -34,11 +34,16 @@ exports.getsNewsServices = async function (request, response, next) {
 };
 exports.addNewsServices = async function (request, response, next) {
     try {
-        var data = { imagePath: [] };
-        //add all image path to array
+        var data = { filePath: [], link: [] };
+        //add all image and file path to array
         request.files.forEach(file => {
-            data.imagePath.push(file.path);
+            data.filePath.push(file.path);
         });
+
+        // add all links from request body
+        if (request.body.link) {
+            data.link = request.body.link.split(',');
+        }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
 

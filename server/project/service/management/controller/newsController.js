@@ -66,13 +66,13 @@ exports.deleteNewsController = async function (query) {
     return new Promise((resolve, reject) => {
         newsModel
             .findOneAndDelete(query)
-            .then(deleteUser => {
-                // find user and delete
-                if (deleteUser) {
+            .then(deleteNews => {
+                // find news and delete
+                if (deleteNews) {
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
-                //no user in database
+                //no news in database
                 else {
                     reject({ error: {}, code: { codeNo: 404, description: 40402 } });
                 }

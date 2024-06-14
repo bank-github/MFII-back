@@ -55,10 +55,10 @@ var middleware = require("../../helpers/middleware");
   app.delete("/mesDelete/:id", mesManagement.deleteRequestService);
 
   // //New api dev
-  // app.post("/addNews", middleware.upload.any(), newsManagement.addNewsServices);// add news and image
+  // app.post("/addNews", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
   // app.get("/getsNews", newsManagement.getsNewsServices);// get all news
-  // app.get("/getNews/:id", newsManagement.getNewsServices);// get specific news via id
-  // app.delete("/deleteNews/:id", middleware.deleteFile, newsManagement.deleteNewsServices);// delete specific news and delete image
+  // app.get("/getNews/:id",  middleware.verifyTokenAndRole("staff"), newsManagement.getNewsByIdService);// get specific news via id
+  // app.delete("/deleteNews/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
 };
 
 

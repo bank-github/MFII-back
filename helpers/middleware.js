@@ -12,6 +12,15 @@ const models = {
     //add other model
 };
 
+// Test Generate a JWT token
+// const payload = {
+//     userId: 'testUserId',
+//     role: 'staff' // Change this to 'user', 'admin', etc., for different roles
+// };
+// // JWT token expires in 1 hour
+// const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+// console.log('JWT Token:', token);
+
 // verify user role
 exports.verifyTokenAndRole = function (role) {
     return function (request, response, next) {
@@ -32,27 +41,6 @@ exports.verifyTokenAndRole = function (role) {
     }
 };
 
-//verify role for frontend
-exports.verify = function (request, response) {
-    const token = request.headers.authorization;
-    if (!token) {
-        return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40107) });
-    }
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40102) });
-        }
-        if (decoded.role == "admin") {
-            return response.status(200).json({ resutl: { number: 0 }, description: resMsg.getMsg(20000) })
-        }
-        else if (decoded.role == "staff") {
-            return response.status(200).json({ resutl: { number: 1 }, description: resMsg.getMsg(20000) })
-        }
-        else {
-            return response.status(200).json({ resutl: { number: 2 }, description: resMsg.getMsg(20000) })
-        }
-    });
-};
 // delete file path on local device
 exports.deleteFileDynamic = async function (request, response, next) {
     try {
@@ -62,9 +50,8 @@ exports.deleteFileDynamic = async function (request, response, next) {
             return response.status(400).json({ result: {}, description: "Invalid model" });
         }
         const query = { _id: new mongo.ObjectId(request.params.id) };
-        
-        const document = await Model.findById(query._id);
-        if (!document) {
+        const news = await newsModel.findById(query._id);
+        if (!news) {
             return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
         }
 
@@ -155,9 +142,7 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        // Remove any invalid characters from the original filename
-        const safeFilename = file.originalname.replace(/[^\w.-]/g, '_');
-        cb(null, Date.now() +'_' + safeFilename);
+        cb(null, Date.now() + '_' + file.originalname);
     }
 });
 
