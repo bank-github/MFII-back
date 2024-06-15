@@ -11,8 +11,9 @@ var messageModel = new Schema({
     interestTech     : { type: String, require: true },
     usesScope        : { type: String, require: true },
     messageReply     : [{
-        userId    : { type: mongoose.Schema.Types.ObjectId, ref: User, required: true },
-        messages  : { type: String, required: true }
+        user   : { type: mongoose.Schema.Types.ObjectId, ref: User, required: true },
+        messages  : { type: String, required: true },
+        date      : { type: Date }
     }],
 });
 

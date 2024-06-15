@@ -3,6 +3,7 @@ const multer = require('multer');
 var fs = require('fs');
 var path = require('path');
 var mongo = require('mongodb');
+const sanitizeFilename = require('sanitize-filename');
 const resMsg = require('../config/message');
 const secretKey = "MFII-project-2023";
 
@@ -58,6 +59,7 @@ exports.verifyTokenAndRole = function (roles) {
                 return response.status(401).json({ resutl: {}, description: resMsg.getMsg(40103) })
             }
             request.userId = decoded.userId;
+            request.role = decoded.role;
             next();
         });
     }
@@ -72,8 +74,8 @@ exports.deleteFileDynamic = async function (request, response, next) {
             return response.status(400).json({ result: {}, description: "Invalid model" });
         }
         const query = { _id: new mongo.ObjectId(request.params.id) };
-        const news = await newsModel.findById(query._id);
-        if (!news) {
+        const document = await Model.findById(query._id);
+        if (!document) {
             return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
         }
 
@@ -164,7 +166,8 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '_' + file.originalname);
+        let originalName = sanitizeFilename(file.originalname); 
+        cb(null, Date.now() + '_' + originalName);
     }
 });
 
