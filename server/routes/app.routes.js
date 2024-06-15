@@ -27,7 +27,7 @@ var middleware = require("../../helpers/middleware");
   //new
   app.get("/getsNews", newsManagement.getsNewsServices);// get all news
   //research
-  app.get("/getsResearch", researchManagement.getsResearchServices); //get all research
+  app.get("/getsResearch/:indust/:prop/:tech", researchManagement.getsResearchServices); //get all research
   app.get("/getResearch/:id", researchManagement.getResearchServices); //get specific research
   //user
   app.post("/login", userManagement.loginUserServices); //all user can login

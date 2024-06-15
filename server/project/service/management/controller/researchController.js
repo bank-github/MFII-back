@@ -18,11 +18,11 @@ exports.getResearchController = async function (query) {
             });
     });
 }
-exports.getsResearchController = async function () {
+exports.getsResearchController = async function (query) {
     return new Promise((resolve, reject) => {
         researchModel
-            .find({}, { __v: 0 })
-            .sort({ _id: -1 })
+            .find(query, { __v: 0 })
+            .sort({ nameMedia: -1 })
             .then(doc => {
                 var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
                 resolve(resInfo);
@@ -71,7 +71,7 @@ exports.updateFileResearchController = async function (query,update) {
             .then(updateResearch => {
                 // find Research and delete
                 if (updateResearch) {
-                    var resInfo = { result: {updateResearch}, code: { codeNo: 200, description: 20000 } }
+                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
                 //no Research in database

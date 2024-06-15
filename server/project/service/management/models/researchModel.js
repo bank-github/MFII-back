@@ -17,8 +17,8 @@ var researchModel = new Schema({
     coop            : { type: [String], required: true },
     ipType          : { type: String, required: true },
     filePath        : { type: [String], default: []},
-    link            : { type: String, default: []},
-    status          : { type: Number, default: "active"},
+    link            : { type: [String], default: []},
+    status          : { type: String, default: "active"},
 });
 
 var research = mongoose.model('research', researchModel, 'research');
