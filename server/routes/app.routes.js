@@ -32,7 +32,8 @@ var middleware = require("../../helpers/middleware");
   //user
   app.post("/login", userManagement.loginUserServices); //all user can login
   app.post("/register", userManagement.createUserService); //default role of register is "user", but if admin add staff must add role to "staff"
-  app.get("/getUser/:id", userManagement.getUserServices); //get detail of each user
+  //all role must login fitst
+  app.get("/getUser", middleware.verifyTokenAndRole(["user", "staff", "admin"]), userManagement.getUserServices); //get detail of each user
   //================================================\\
 
 
@@ -84,6 +85,8 @@ var middleware = require("../../helpers/middleware");
   //research
   //user
   //================================================\\
+
+  app.patch('/no', researchManagement.image)
 };
 
 

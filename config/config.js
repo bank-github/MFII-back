@@ -9,7 +9,7 @@ module.exports = {
     debug: true,
     key:process.env.KEY,
     // mongoURI: 'mongodb+srv://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_HOST+'/'+process.env.MONGO_NAME+'?authSource=admin',
-    mongoURI: 'mongodb://192.168.1.36:27017/MFii?authSource=admin',
+    mongoURI: 'mongodb://localhost:27017/MFii?authSource=admin',
     // mongoURI: 'mongodb://192.168.172.136:27017/MFii?authSource=admin',
     timeout: 500000,
     tokenLength: 32,

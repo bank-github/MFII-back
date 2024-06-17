@@ -60,7 +60,7 @@ exports.getsUserServices = async function (request, response, next) {
 exports.getUserServices = async function (request, response, next) {
     try {
         var query = {};
-        query._id = new mongo.ObjectId(request.params.id);
+        query._id = new mongo.ObjectId(request.userId);
         // no query because get all user
         const doc = await userController.getUserController(query);
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
