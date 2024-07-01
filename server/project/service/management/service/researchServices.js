@@ -30,7 +30,7 @@ exports.getsResearchServices = async function (request, response, next) {
                 indust === 'all' ? {} : { 'industryType': researchDetail.indust[indust] },
                 prop === 'all' ? {} : { 'intelProp': researchDetail.prop[prop] },
                 tech === 'all' ? {} : { 'techReadiness': researchDetail.tech[tech] },
-                descript === 'all' ? {} : { 'descripton': { $regex: descript, $options: 'i' } } 
+                descript === 'all' ? {} : { 'descripton': { $regex: descript, $options: 'i' } }
             ].filter(condition => Object.keys(condition).length > 0)
         }
         if (query.$and.length === 0) {
