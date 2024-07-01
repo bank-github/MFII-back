@@ -85,6 +85,48 @@ var middleware = require("../../helpers/middleware");
   //research
   //user
   //================================================\\
+
+    // get product count
+    let globalVisitorCount = 0;
+    const productVisits = {};
+    const sessions = new Set();
+    
+    app.get('/visitor-count', (req, res) => {
+      const sessionId = req.query.sessionId;
+      if (!sessions.has(sessionId)) {
+        globalVisitorCount++;
+        sessions.add(sessionId);
+      }
+      res.json({ count: globalVisitorCount });
+    });
+    
+    app.get('/product-visits/:productId', (req, res) => {
+      const { productId } = req.params;
+      const sessionId = req.query.sessionId;
+      
+      if (!productVisits[productId]) {
+        productVisits[productId] = 0;
+      }
+      productVisits[productId]++;
+    
+      if (!sessions.has(sessionId)) {
+        globalVisitorCount++;
+        sessions.add(sessionId);
+      }
+    
+      res.json({ 
+        globalCount: globalVisitorCount,
+        productCount: productVisits[productId] 
+      });
+    });
+    
+    app.get('/all-product-counts', (req, res) => {
+      res.json({
+        globalCount: globalVisitorCount,
+        productCounts: productVisits
+      });
+    });
+    
 };
 
 
