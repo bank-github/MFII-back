@@ -2,6 +2,7 @@ var mongo = require('mongodb');
 var researchController = require('../controller/researchController');
 var resMsg = require('../../../../../config/message');
 var researchDetail = require('../../../../../config/researchDetail');
+
 exports.getResearchServices = async function (request, response, next) {
     try {
         var query = {};
@@ -23,11 +24,13 @@ exports.getsResearchServices = async function (request, response, next) {
         var indust = request.params.indust;
         var prop = request.params.prop;
         var tech = request.params.tech;
+        var keyword = request.params.keyword;
         var query = {
             $and: [
                 indust === 'all' ? {} : { 'industryType': researchDetail.indust[indust] },
                 prop === 'all' ? {} : { 'intelProp': researchDetail.prop[prop] },
-                tech === 'all' ? {} : { 'techReadiness': researchDetail.tech[tech] } 
+                tech === 'all' ? {} : { 'techReadiness': researchDetail.tech[tech] },
+                keyword === 'all' ? {} : { 'keyword': { $in: [keyword] } }
             ].filter(condition => Object.keys(condition).length > 0)
         }
         if (query.$and.length === 0) {
