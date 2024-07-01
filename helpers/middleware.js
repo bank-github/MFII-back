@@ -83,7 +83,7 @@ exports.deleteFileDynamic = async function (request, response, next) {
         // Delete the file
         if (document.filePath) {
             document.filePath.forEach(file => {
-            if (file !== '../uploads/image/noImage.jpg') {
+            if (file !== 'uploads/image/noImage.jpg') {
                 const filePath = path.join(__dirname, '../' + file);
                 fs.unlink(filePath, (err) => {
                     if (err) {

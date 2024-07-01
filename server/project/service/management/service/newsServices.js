@@ -84,8 +84,8 @@ exports.deleteNewsServices = async function (request, response, next) {
         const doc = await newsController.deleteNewsController(query);
 
         // Delete the file without noImage
-        if (doc.result.filePath && doc.result.filePath.includes('../uploads/image/noImage.jpg')) {
-            doc.result.filePath = doc.result.filePath.filter(file => file !== '../uploads/image/noImage.jpg');
+        if (doc.result.filePath && doc.result.filePath.includes('uploads/image/noImage.jpg')) {
+            doc.result.filePath = doc.result.filePath.filter(file => file !== 'uploads/image/noImage.jpg');
         }
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
