@@ -24,13 +24,13 @@ exports.getsResearchServices = async function (request, response, next) {
         var indust = request.params.indust;
         var prop = request.params.prop;
         var tech = request.params.tech;
-        var keyword = request.params.keyword;
+        var descript = request.params.descript;
         var query = {
             $and: [
                 indust === 'all' ? {} : { 'industryType': researchDetail.indust[indust] },
                 prop === 'all' ? {} : { 'intelProp': researchDetail.prop[prop] },
                 tech === 'all' ? {} : { 'techReadiness': researchDetail.tech[tech] },
-                keyword === 'all' ? {} : { 'keyword': { $in: [keyword] } }
+                descript === 'all' ? {} : { 'descripton': { $regex: descript, $options: 'i' } } 
             ].filter(condition => Object.keys(condition).length > 0)
         }
         if (query.$and.length === 0) {
