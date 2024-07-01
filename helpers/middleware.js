@@ -82,13 +82,14 @@ exports.deleteFileDynamic = async function (request, response, next) {
         // Delete the file
         if (document.filePath) {
             document.filePath.forEach(file => {
+            if (file !== 'uploads/image/noImage.jpg') {
                 const filePath = path.join(__dirname, '../' + file);
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
                     }
                 });
-            });
+        }});
             next(); // Proceed to the next middleware
         } else {
             next(); // If no imagePath, proceed to the next middleware

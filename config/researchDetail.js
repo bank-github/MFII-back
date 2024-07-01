@@ -31,4 +31,4 @@ var techReadiness = {
 
 exports.indust = indust;
 exports.prop = prop;
-exports.techReadiness = techReadiness;
+exports.tech = techReadiness;

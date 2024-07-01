@@ -27,7 +27,7 @@ var middleware = require("../../helpers/middleware");
   //new
   app.get("/getsNews", newsManagement.getsNewsServices);// get all news
   //research
-  app.get("/getsResearch/:indust/:prop/:tech", researchManagement.getsResearchServices); //get all research
+  app.get("/getsResearch/:indust/:prop/:tech/:descript", researchManagement.getsResearchServices); //get all research
   app.get("/getResearch/:id", researchManagement.getResearchServices); //get specific research
   //user
   app.post("/login", userManagement.loginUserServices); //all user can login
@@ -86,48 +86,47 @@ var middleware = require("../../helpers/middleware");
   //user
   //================================================\\
 
-
-  // get product count
-  let globalVisitorCount = 0;
-const productVisits = {};
-const sessions = new Set();
-
-app.get('/visitor-count', (req, res) => {
-  const sessionId = req.query.sessionId;
-  if (!sessions.has(sessionId)) {
-    globalVisitorCount++;
-    sessions.add(sessionId);
-  }
-  res.json({ count: globalVisitorCount });
-});
-
-app.get('/product-visits/:productId', (req, res) => {
-  const { productId } = req.params;
-  const sessionId = req.query.sessionId;
-  
-  if (!productVisits[productId]) {
-    productVisits[productId] = 0;
-  }
-  productVisits[productId]++;
-
-  if (!sessions.has(sessionId)) {
-    globalVisitorCount++;
-    sessions.add(sessionId);
-  }
-
-  res.json({ 
-    globalCount: globalVisitorCount,
-    productCount: productVisits[productId] 
-  });
-});
-
-app.get('/all-product-counts', (req, res) => {
-  res.json({
-    globalCount: globalVisitorCount,
-    productCounts: productVisits
-  });
-});
-
+    // get product count
+    let globalVisitorCount = 0;
+    const productVisits = {};
+    const sessions = new Set();
+    
+    app.get('/visitor-count', (req, res) => {
+      const sessionId = req.query.sessionId;
+      if (!sessions.has(sessionId)) {
+        globalVisitorCount++;
+        sessions.add(sessionId);
+      }
+      res.json({ count: globalVisitorCount });
+    });
+    
+    app.get('/product-visits/:productId', (req, res) => {
+      const { productId } = req.params;
+      const sessionId = req.query.sessionId;
+      
+      if (!productVisits[productId]) {
+        productVisits[productId] = 0;
+      }
+      productVisits[productId]++;
+    
+      if (!sessions.has(sessionId)) {
+        globalVisitorCount++;
+        sessions.add(sessionId);
+      }
+    
+      res.json({ 
+        globalCount: globalVisitorCount,
+        productCount: productVisits[productId] 
+      });
+    });
+    
+    app.get('/all-product-counts', (req, res) => {
+      res.json({
+        globalCount: globalVisitorCount,
+        productCounts: productVisits
+      });
+    });
+    
 };
 
 

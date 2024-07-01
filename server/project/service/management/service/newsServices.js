@@ -1,3 +1,4 @@
+//newsServices
 var mongo = require('mongodb');
 var newsController = require('../controller/newsController');
 var resMsg = require('../../../../../config/message');
@@ -34,7 +35,7 @@ exports.getsNewsServices = async function (request, response, next) {
 };
 exports.addNewsServices = async function (request, response, next) {
     try {
-        var data = { filePath: [], link: [] };
+        var data = { filePath: [], linkVideo: [], linkImage: [] };
         //add all image and file path to array
         request.files.forEach(file => {
             data.filePath.push(file.path);
@@ -81,6 +82,11 @@ exports.deleteNewsServices = async function (request, response, next) {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
         const doc = await newsController.deleteNewsController(query);
+
+        // Delete the file without noImage
+        if (doc.result.filePath && doc.result.filePath.includes('uploads/image/noImage.jpg')) {
+            doc.result.filePath = doc.result.filePath.filter(file => file !== 'uploads/image/noImage.jpg');
+        }
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
