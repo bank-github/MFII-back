@@ -1,6 +1,6 @@
 var mongo = require('mongodb');
 var userModel = require('../models/userModel');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const saltRound = 10;
 const secretKey = "MFII-project-2023"
