@@ -15,13 +15,13 @@ const models = {
 };
 
 // Test Generate a JWT token
-const payload = {
-    userId: 'testUserId',
-    role: 'staff' // Change this to 'user', 'admin', etc., for different roles
-};
+// const payload = {
+//     userId: 'testUserId',
+//     role: 'staff' // Change this to 'user', 'admin', etc., for different roles
+// };
 // // JWT token expires in 1 hour
-const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
-console.log('JWT Token:', token);
+// const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+// console.log('JWT Token:', token);
 
 //verify role for frontend
 exports.verify = function (request, response) {
@@ -83,14 +83,15 @@ exports.deleteFileDynamic = async function (request, response, next) {
         // Delete the file
         if (document.filePath) {
             document.filePath.forEach(file => {
-            if (file !== 'uploads/image/noImage.jpg') {
-                const filePath = path.join(__dirname, '../' + file);
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-                    }
-                });
-        }});
+                if (file !== 'uploads/image/noImage.jpg') {
+                    const filePath = path.join(__dirname, '../' + file);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                        }
+                    });
+                }
+            });
             next(); // Proceed to the next middleware
         } else {
             next(); // If no imagePath, proceed to the next middleware
@@ -120,28 +121,24 @@ exports.deleteFileSome = async function (request, response, next) {
             return response.status(400).json({ result: {}, description: "Invalid model" });
         }
         const query = { _id: new mongo.ObjectId(request.params.id) };
-        
+
         const document = await Model.findById(query._id);
         if (!document) {
             return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
         }
 
         // Delete the file, excluding noImage.jpg
-        if (document.filePath) {
-            const filePath = request.body.filePath;
-            if (filePath !== 'uploads/image/noImage.jpg') {
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-                    }
-                    next();
-                });
-            } else {
-                next(); // If noImage.jpg, proceed to the next middleware without deleting
-            }
+        const filePath = request.body.filePath;
+        if (filePath !== 'uploads/image/noImage.jpg') {
+            const filePath = path.join(__dirname, '../' + filePath);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                }
+                next();
+            });
         } else {
-            // If document.filePath is falsy, you might want to handle this case accordingly
-            response.status(404).json({ result: {}, description: "File path not found" });
+            next(); // If noImage.jpg, proceed to the next middleware without deleting
         }
     } catch (err) {
         if (err.code != null) {
@@ -172,7 +169,7 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        let originalName = sanitizeFilename(file.originalname); 
+        let originalName = sanitizeFilename(file.originalname);
         cb(null, Date.now() + '_' + originalName);
     }
 });
