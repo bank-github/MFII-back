@@ -1,3 +1,4 @@
+//newsServices
 var mongo = require('mongodb');
 var newsController = require('../controller/newsController');
 var resMsg = require('../../../../../config/message');
@@ -34,15 +35,18 @@ exports.getsNewsServices = async function (request, response, next) {
 };
 exports.addNewsServices = async function (request, response, next) {
     try {
-        var data = { filePath: [], link: [] };
+        var data = { filePath: [], linkVideo: [], linkImage: [] };
         //add all image and file path to array
         request.files.forEach(file => {
             data.filePath.push(file.path);
         });
 
         // add all links from request body
-        if (request.body.link) {
-            data.link = request.body.link.split(',');
+        if (request.body.linkVideo) {
+            data.linkVideo = request.body.linkVideo.split(',');
+        }
+        if (request.body.linkImage) {
+            data.linkImage = request.body.linkImage.split(',');
         }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
@@ -81,6 +85,22 @@ exports.deleteNewsServices = async function (request, response, next) {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
         const doc = await newsController.deleteNewsController(query);
+
+        // Delete the file without noImage
+        if (doc.result.filePath) {
+            doc.result.filePath = doc.result.filePath.filter(file => {
+                if (file !== 'uploads/image/noImage.jpg') {
+                    const filePath = path.join(__dirname, '../' + file);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                        }
+                    });
+                    return false;
+                }
+                return true;
+            });
+        }
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
