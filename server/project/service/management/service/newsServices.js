@@ -42,8 +42,11 @@ exports.addNewsServices = async function (request, response, next) {
         });
 
         // add all links from request body
-        if (request.body.link) {
-            data.link = request.body.link.split(',');
+        if (request.body.linkVideo) {
+            data.linkVideo = request.body.linkVideo.split(',');
+        }
+        if (request.body.linkImage) {
+            data.linkImage = request.body.linkImage.split(',');
         }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
@@ -84,8 +87,19 @@ exports.deleteNewsServices = async function (request, response, next) {
         const doc = await newsController.deleteNewsController(query);
 
         // Delete the file without noImage
-        if (doc.result.filePath && doc.result.filePath.includes('uploads/image/noImage.jpg')) {
-            doc.result.filePath = doc.result.filePath.filter(file => file !== 'uploads/image/noImage.jpg');
+        if (doc.result.filePath) {
+            doc.result.filePath = doc.result.filePath.filter(file => {
+                if (file !== 'uploads/image/noImage.jpg') {
+                    const filePath = path.join(__dirname, '../' + file);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                        }
+                    });
+                    return false;
+                }
+                return true;
+            });
         }
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
