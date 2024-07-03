@@ -3,7 +3,7 @@
  */
 var cfg = require('../config/config');
 var crypto = require('crypto');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var mime = require('mime');
 var macaddress = require('macaddress');
 const moment = require('moment');
