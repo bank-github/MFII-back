@@ -85,8 +85,6 @@ var middleware = require("../../helpers/middleware");
   //research
   //user
   //================================================\\
-
-  app.patch('/no', researchManagement.image)
 };
 
 

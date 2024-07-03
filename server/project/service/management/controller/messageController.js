@@ -22,8 +22,8 @@ exports.getRequestController = async function (query) {
                 {
                     $project: {
                         _id: 1,
-                        businessType: 1,
-                        businessName: 1,
+                        businessType: '$user_info.businessType',
+                        businessName: '$user_info.businessName',
                         interestTech: 1,
                         usesScope: 1,
                         email: '$user_info.email',       // Flatten the user_info fields
@@ -93,8 +93,8 @@ exports.getMessageReplyController = async function (query) {
                 {
                     $project: {
                         _id: 1,
-                        businessType: 1,
-                        businessName: 1,
+                        businessType: '$user_info.businessType',
+                        businessName: '$user_info.businessName',
                         interestTech: 1,
                         usesScope: 1,
                         messageReply: 1,
