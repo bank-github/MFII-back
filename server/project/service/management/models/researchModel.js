@@ -19,6 +19,7 @@ var researchModel = new Schema({
     filePath        : { type: [String], default: []},
     link            : { type: [String], default: []},
     status          : { type: String, default: "active"},
+    keyword         : { type: [String], default: []},
 });
 
 var research = mongoose.model('research', researchModel, 'research');
