@@ -4,10 +4,6 @@ var http = require('http');
 var https = require('https');
 var fs = require('fs');
 var cfg = require('./config/config');
-<<<<<<< HEAD
-
-=======
->>>>>>> 3f76e76b4544fcf40cd49af3bd8512a0817848fe
 /**
  * Get port from environment and store in Express.
  */
