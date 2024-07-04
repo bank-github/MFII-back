@@ -127,9 +127,10 @@ exports.deleteFileSome = async function (request, response, next) {
         }
 
         // Delete the file, excluding noImage.jpg
-        const filePath = request.body.filePath;
+        var filePath = request.body.filePath;
+        console.log(filePath)
         if (filePath !== 'uploads/image/noImage.jpg') {
-            const filePath = path.join(__dirname, '../' + filePath);
+            filePath = path.join(__dirname, '../' + filePath);
             fs.unlink(filePath, (err) => {
                 if (err) {
                     return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });

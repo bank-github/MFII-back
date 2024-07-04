@@ -5,8 +5,6 @@ var https = require('https');
 var fs = require('fs');
 var cfg = require('./config/config');
 
-const cors = require("cors");
-app.use(cors());
 /**
  * Get port from environment and store in Express.
  */
