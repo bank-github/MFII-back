@@ -9,10 +9,11 @@ var userModel = new Schema({
      firstName       : {type: String, require: true},
      lastName        : {type: String, require: true},
      phoneNumber     : {type: String, require: true},
+     businessType     : {type:String, require: true},
+     businessName     : { type: String, require: true },
      role            : {type: String, require: true, default: "user"},
-     createDate      : {type: Date, require: true},
      status          : {type: String, require: true, default: "active"}
-});
+}, { timestamps: true });
 
 var user = mongoose.model('user', userModel, 'user');
 module.exports = user;

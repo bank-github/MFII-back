@@ -2,6 +2,7 @@
  * Created by atthapok on 24/06/2559.
  */
 var cookieParser = require("cookie-parser");
+const { v4: uuidv4 } = require('uuid'); // สำหรับสร้าง session ID
 var express = require("express");
 var bodyParser = require("body-parser");
 var nocache = require("nocache");
@@ -19,9 +20,11 @@ var path = require("path");
 // const expressValidator = require('express-validator');
 
 var initialize = require("../helpers/initialize");
+const appRoutes = require('../server/routes/app.routes');
 const homeroute = require("../server/routes/app.routes");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+var counterModel = require("../server/project/service/management/models/counterModel");
 // var logger = require('../helpers/logger');
 
 module.exports = function () {
@@ -42,11 +45,6 @@ module.exports = function () {
       app.use(cookieParser());
       app.use(xssFilter());
       // app.use(validator());
-      app.use('/uploads', express.static('uploads'));
-      app.use(sass({src: "./sass", dest: "./public/css", debug: true, outputStyle: "compressed",}));
-      app.use(express.static(path.join(__dirname, "./public")));
-      app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
-      app.use(serveStatic("public", { index: ["index.html", "index.htm"] }));
       // app.use(csp({
       //     // Specify directives as normal.
       //     directives: {
@@ -76,6 +74,12 @@ module.exports = function () {
       //     browserSniff: true,
       //   }));
 
+      app.use('/uploads', express.static('uploads'));
+      app.use(sass({ src: "./sass", dest: "./public/css", debug: true, outputStyle: "compressed", }));
+      app.use(express.static(path.join(__dirname, "./public")));
+      app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
+      app.use(serveStatic("public", { index: ["index.html", "index.htm"] }));
+
       app.use(function (req, res, next) {
         if (req.method === "OPTIONS") {
           var headers = {};
@@ -99,7 +103,53 @@ module.exports = function () {
         }
       });
 
-      require("../server/routes/app.routes")(app);
+      // counter visitor
+      app.use(async function (request, response, next) {
+        try {
+          const sessionId = request.cookies.sessionId;
+
+          // ถ้าไม่มี sessionId ในคุกกี้ แสดงว่านี่เป็นการเข้าชมครั้งแรกในเซสชันนี้
+          if (!sessionId) {
+            // สร้าง sessionId ใหม่และตั้งค่าในคุกกี้
+            const newSessionId = uuidv4();
+            console.log(newSessionId);
+            response.cookie('sessionId', newSessionId, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // คุกกี้มีอายุ 1 วัน
+          }
+          let visit = await counterModel.findOne();
+          if (!visit) {
+            visit = new counterModel();
+          }
+
+          // เพิ่มจำนวนการเข้าชมทั้งหมด
+          visit.totalAccess += 1;
+
+          // อัปเดตการเข้าชมรายปี
+          const currentYear = new Date().toISOString().slice(0, 4); // รูปแบบ YYYY
+          visit.yearlyAccess.set(currentYear, (visit.yearlyAccess.get(currentYear) || 0) + 1);
+
+          // อัปเดตการเข้าชมรายเดือน
+          const currentMonth = new Date().toISOString().slice(0, 7); // รูปแบบ YYYY-MM
+          visit.monthlyAccess.set(currentMonth, (visit.monthlyAccess.get(currentMonth) || 0) + 1);
+
+          // อัปเดตการเข้าชมรายวัน
+          const currentDay = new Date().toISOString().slice(0, 10); // รูปแบบ YYYY-MM-DD
+          visit.dailyAccess.set(currentDay, (visit.dailyAccess.get(currentDay) || 0) + 1);
+
+          // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง productId มาด้วย)
+          const productId = request.query.researchId;
+          if (productId) {
+            visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
+          }
+
+          await visit.save();
+          next();
+        } catch (error) {
+          console.error('Error tracking visit:', error);
+          next(error);
+        }
+      });
+
+      appRoutes(app);
 
 
     } else {

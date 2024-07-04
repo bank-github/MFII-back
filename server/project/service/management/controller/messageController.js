@@ -1,6 +1,5 @@
-var mongo = require('mongodb');
 var messageModel = require('../models/messageModel');
-var userController = require('../controller/userController');
+
 exports.getRequestController = async function (query) {
     return new Promise((resolve, reject) => {
         messageModel
@@ -22,8 +21,8 @@ exports.getRequestController = async function (query) {
                 {
                     $project: {
                         _id: 1,
-                        businessType: 1,
-                        businessName: 1,
+                        businessType: '$user_info.businessType',
+                        businessName: '$user_info.businessName',
                         interestTech: 1,
                         usesScope: 1,
                         email: '$user_info.email',       // Flatten the user_info fields
@@ -46,31 +45,7 @@ exports.getRequestController = async function (query) {
                 reject(rejInfo);
             });
     });
-}
-
-// exports.getMessageReplyController = async function (messageId) {
-//     return new Promise((resolve, reject) => {
-//         messageModel.findById(messageId,)
-//             .populate('messageReply.user', 'messages firstName lastName')
-//             .then(doc => {
-//                 if (doc == null) {
-//                     var rejInfo = { error: {}, code: { codeNO: 404, description: 40401 } };
-//                     reject(rejInfo);
-//                 } else {
-//                     let newMesReply = []
-//                     doc.messageReply.forEach(reply => {
-//                         const { _id, ...newReply } = reply.toObject();
-//                         newMesReply.push(newReply);
-//                     })
-//                     var resInfo = { result: newMesReply, code: { codeNO: 200, description: 200 } };
-//                     resolve(resInfo);
-//                 }
-//             }).catch(err => {
-//                 var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } };
-//                 reject(rejInfo);
-//             });
-//     });
-// };
+};
 
 exports.getMessageReplyController = async function (query) {
     return new Promise((resolve, reject) => {
@@ -93,8 +68,8 @@ exports.getMessageReplyController = async function (query) {
                 {
                     $project: {
                         _id: 1,
-                        businessType: 1,
-                        businessName: 1,
+                        businessType: '$user_info.businessType',
+                        businessName: '$user_info.businessName',
                         interestTech: 1,
                         usesScope: 1,
                         messageReply: 1,
@@ -125,6 +100,7 @@ exports.getMessageReplyController = async function (query) {
             });
     });
 };
+
 exports.updateMessageReplyController = async function (messageId, messageReplyData) {
     return new Promise((resolve, reject) => {
         console.log("Mes ID: ", messageId);
@@ -145,7 +121,7 @@ exports.updateMessageReplyController = async function (messageId, messageReplyDa
             reject(rejInfo);
         });
     });
-}
+};
 
 exports.createRequestController = async function (data) {
     return new Promise((resolve, reject) => {
@@ -159,7 +135,7 @@ exports.createRequestController = async function (data) {
                 reject(rejInfo);
             });
     });
-}
+};
 
 exports.updateRequestController = async (query, data) => {
     return new Promise((resolve, reject) => {
@@ -196,4 +172,4 @@ exports.deleteRequestController = async function (query) {
                 reject(rejInfo);
             });
     });
-}
+};

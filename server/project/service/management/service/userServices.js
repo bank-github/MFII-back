@@ -18,6 +18,7 @@ exports.createUserService = async function (request, response, next) {
         }
     }
 };
+
 exports.loginUserServices = async function (request, response, next) {
     try {
         // find only user have status active
@@ -36,6 +37,7 @@ exports.loginUserServices = async function (request, response, next) {
         }
     }
 };
+
 exports.getsUserServices = async function (request, response, next) {
     try {
         var query = {};
@@ -57,6 +59,7 @@ exports.getsUserServices = async function (request, response, next) {
         }
     }
 };
+
 exports.getUserServices = async function (request, response, next) {
     try {
         var query = {};
@@ -75,6 +78,7 @@ exports.getUserServices = async function (request, response, next) {
         }
     }
 };
+
 exports.deleteStaffServices = async function (request, response, next) {
     try {
         var query = {};
@@ -92,6 +96,7 @@ exports.deleteStaffServices = async function (request, response, next) {
         }
     }
 };
+
 exports.updateUserServices = async function (request, response, next) {
     try {
         var query = {};
@@ -109,6 +114,7 @@ exports.updateUserServices = async function (request, response, next) {
         }
     }
 };
+
 exports.updateStaffServices = async function (request, response, next) {
     try {
         var query = {};
