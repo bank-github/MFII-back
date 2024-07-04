@@ -85,7 +85,7 @@ module.exports = function () {
           var headers = {};
           // IE8 does not allow domains to be specified, just the *
           // headers["Access-Control-Allow-Origin"] = req.headers.origin;
-          headers["Access-Control-Allow-Origin"] = "*";
+          headers["Access-Control-Allow-Origin"] = "https://ip-mfii.mfu.ac.th/";
           headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, PATCH, OPTIONS";
           headers["Access-Control-Allow-Credentials"] = false;
           headers["Access-Control-Max-Age"] = "86400"; // 24 hours
