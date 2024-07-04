@@ -6,7 +6,7 @@ var researchDetail = require('../../../../../config/researchDetail');
 exports.getResearchServices = async function (request, response, next) {
     try {
         var query = {};
-        query._id = new mongo.ObjectId(request.params.id);
+        query._id = new mongo.ObjectId(request.query.researchId);
         const doc = await researchController.getResearchController(query);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
@@ -19,6 +19,7 @@ exports.getResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.getsResearchServices = async function (request, response, next) {
     try {
         var indust = request.params.indust;
@@ -33,8 +34,10 @@ exports.getsResearchServices = async function (request, response, next) {
                 descript === 'all' ? {} : {
                     $or: [
                         { 'description': { $regex: descript, $options: 'i' } },
-                        { 'keyword': { $elemMatch: { $regex: descript, $options: 'i' } } }
-                    ]
+                        { 'keyword': { $elemMatch: { $regex: descript, $options: 'i' } } },
+                        { 'inventor': { $elemMatch: { $regex: descript, $options: 'i' } } },
+                        { 'nameProduct': { $regex: descript, $options: 'i' } },
+                        { 'nameOnMedia': { $regex: descript, $options: 'i' } }                    ]
                 }
             ].filter(condition => Object.keys(condition).length > 0)
         }
@@ -53,6 +56,7 @@ exports.getsResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.addResearchServices = async function (request, response, next) {
     try {
         var data = request.body;
@@ -80,6 +84,7 @@ exports.addResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.deleteResearchServices = async function (request, response, next) {
     try {
         var query = {};
@@ -96,6 +101,7 @@ exports.deleteResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.deleteFileResearchServices = async function (request, response, next) {
     try {
         var query = { _id: new mongo.ObjectId(request.params.id) };
@@ -112,6 +118,7 @@ exports.deleteFileResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.addFileResearchServices = async function (request, response, next) {
     try {
         var query = { _id: new mongo.ObjectId(request.params.id) };
@@ -131,6 +138,7 @@ exports.addFileResearchServices = async function (request, response, next) {
         }
     }
 };
+
 exports.updateDataResearchServices = async function (request, response, next) {
     try {
         var query = { _id: new mongo.ObjectId(request.params.id) };

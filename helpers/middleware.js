@@ -5,7 +5,7 @@ var path = require('path');
 var mongo = require('mongodb');
 const sanitizeFilename = require('sanitize-filename');
 const resMsg = require('../config/message');
-const secretKey = "MFII-project-2023";
+const secretKey = "MFII-project-2024";
 
 const models = {
     news: require('../server/project/service/management/models/newsModel'),

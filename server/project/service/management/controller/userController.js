@@ -1,9 +1,10 @@
-var mongo = require('mongodb');
 var userModel = require('../models/userModel');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const saltRound = 10;
-const secretKey = "MFII-project-2023"
+const secretKey = "MFII-project-2024"
+
+
 exports.createUserController = async function (data) {
     return new Promise((resolve, reject) => {
         userModel.findOne({ email: data.email })
@@ -21,6 +22,7 @@ exports.createUserController = async function (data) {
                         } else {
                             //assign password to new hash password
                             data.password = hash
+                            console.log(data)
                             var userData = new userModel(data);
                             //add data to database
                             userData.save()
@@ -29,8 +31,8 @@ exports.createUserController = async function (data) {
                                         var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
                                         resolve(resInfo);
                                     } else {
-                                        const token = jwt.sign({ userId: doc._id, role: doc.role }, secretKey, { expiresIn: '1h' });
-                                        var resInfo = { result: {token: token}, code: { codeNo: 200, description: 20000 } };
+                                        const token = jwt.sign({ userId: doc._id, role: doc.role }, secretKey, { expiresIn: '3h' });
+                                        var resInfo = { result: { token: token }, code: { codeNo: 200, description: 20000 } };
                                         resolve(resInfo);
                                     }
                                 }).catch(err => {
@@ -46,6 +48,7 @@ exports.createUserController = async function (data) {
             })
     })
 };
+
 exports.loginUserController = async function (data) {
     return new Promise((resolve, reject) => {
         userModel
@@ -80,6 +83,7 @@ exports.loginUserController = async function (data) {
             });
     });
 };
+
 exports.getsUserController = async function (query) {
     console.log(query);
     return new Promise((resolve, reject) => {
@@ -98,6 +102,7 @@ exports.getsUserController = async function (query) {
             });
     });
 };
+
 exports.getUserController = async function (query) {
     return new Promise((resolve, reject) => {
         userModel
@@ -114,6 +119,7 @@ exports.getUserController = async function (query) {
             });
     });
 };
+
 exports.deleteStaffContoller = async function (query) {
     return new Promise((resolve, reject) => {
         userModel
@@ -133,6 +139,7 @@ exports.deleteStaffContoller = async function (query) {
             });
     });
 };
+
 exports.updateUserController = async function (query, data) {
     return new Promise((resolve, reject) => {
         userModel
@@ -142,7 +149,7 @@ exports.updateUserController = async function (query, data) {
                 // if can find and update data
                 if (doc) {
                     // assign newDoc to keep data without password, role, __v
-                    const {password, role, __v, status, createDate, ...newDoc } = doc.toObject();
+                    const { password, role, __v, status, createDate, ...newDoc } = doc.toObject();
                     var resInfo = { result: newDoc, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
@@ -156,6 +163,7 @@ exports.updateUserController = async function (query, data) {
             });
     });
 };
+
 exports.updateStaffController = async function (query, data) {
     return new Promise((resolve, reject) => {
         userModel

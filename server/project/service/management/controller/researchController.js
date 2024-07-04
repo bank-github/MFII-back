@@ -1,4 +1,3 @@
-var mongo = require('mongodb');
 var researchModel = require('../models/researchModel');
 
 exports.getResearchController = async function (query) {
@@ -17,7 +16,8 @@ exports.getResearchController = async function (query) {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.getsResearchController = async function (query) {
     return new Promise((resolve, reject) => {
         researchModel
@@ -31,7 +31,8 @@ exports.getsResearchController = async function (query) {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.addResearchController = async function (data) {
     return new Promise((resolve, reject) => {
         var researchModels = new researchModel(data);
@@ -44,7 +45,8 @@ exports.addResearchController = async function (data) {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.deleteResearchController = async function (query) {
     return new Promise((resolve, reject) => {
         researchModel
@@ -63,7 +65,8 @@ exports.deleteResearchController = async function (query) {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
+};
+
 exports.updateFileResearchController = async function (query,update) {
     return new Promise((resolve, reject) => {
         researchModel
@@ -82,7 +85,8 @@ exports.updateFileResearchController = async function (query,update) {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
+};
+
 exports.updateDataResearchController = async function (query,update) {
     return new Promise((resolve, reject) => {
         researchModel
@@ -101,7 +105,7 @@ exports.updateDataResearchController = async function (query,update) {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
+};
 
 
 

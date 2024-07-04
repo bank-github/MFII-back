@@ -20,7 +20,7 @@ var researchModel = new Schema({
     link            : { type: [String], default: []},
     status          : { type: String, default: "active"},
     keyword         : { type: [String], default: []},
-});
+}, { timestamps: true });
 
 var research = mongoose.model('research', researchModel, 'research');
 module.exports = research;

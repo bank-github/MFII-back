@@ -1,7 +1,8 @@
 var userManagement = require("../project/service/management/service/userServices");
 var newsManagement = require("../project/service/management/service/newsServices");
 var mesManagement = require("../project/service/management/service/messageServices");
-var researchManagement = require("../project/service/management/service/researchServices")
+var researchManagement = require("../project/service/management/service/researchServices");
+var counterManagement = require("../project/service/management/service/counterServices");
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -10,9 +11,13 @@ var middleware = require("../../helpers/middleware");
   var adminPath = "/admin"
   var staffPath = "/staff";
 
-  app.get("/", function (req, response) {
+  app.get("/", async function (req, response) {
     response.status(200).json(new Date());
   })
+
+  
+  app.get('/getStatAll', counterManagement.getStatServices);
+  app.get('/getStatProduct', counterManagement.getProductServices);
 
   // use to create admin for use only may be delete when add already
   app.post("/createAdmin", userManagement.createUserService);
@@ -28,7 +33,7 @@ var middleware = require("../../helpers/middleware");
   app.get("/getsNews", newsManagement.getsNewsServices);// get all news
   //research
   app.get("/getsResearch/:indust/:prop/:tech/:descript", researchManagement.getsResearchServices); //get all research
-  app.get("/getResearch/:id", researchManagement.getResearchServices); //get specific research
+  app.get("/getResearch", researchManagement.getResearchServices); //get specific research
   //user
   app.post("/login", userManagement.loginUserServices); //all user can login
   app.post("/register", userManagement.createUserService); //default role of register is "user", but if admin add staff must add role to "staff"
@@ -73,7 +78,7 @@ var middleware = require("../../helpers/middleware");
   app.patch(adminPath + "/updatePatch/:id", middleware.verifyTokenAndRole("admin"), userManagement.updateStaffServices);// admin update staff use Patch
   //================================================\\
 
-  
+
   //========== login user and staff can use ==========\\
   //message
   app.get("/mesGetData", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.getRequestService);
@@ -86,47 +91,6 @@ var middleware = require("../../helpers/middleware");
   //user
   //================================================\\
 
-    // get product count
-    let globalVisitorCount = 0;
-    const productVisits = {};
-    const sessions = new Set();
-    
-    app.get('/visitor-count', (req, res) => {
-      const sessionId = req.query.sessionId;
-      if (!sessions.has(sessionId)) {
-        globalVisitorCount++;
-        sessions.add(sessionId);
-      }
-      res.json({ count: globalVisitorCount });
-    });
-    
-    app.get('/product-visits/:productId', (req, res) => {
-      const { productId } = req.params;
-      const sessionId = req.query.sessionId;
-      
-      if (!productVisits[productId]) {
-        productVisits[productId] = 0;
-      }
-      productVisits[productId]++;
-    
-      if (!sessions.has(sessionId)) {
-        globalVisitorCount++;
-        sessions.add(sessionId);
-      }
-    
-      res.json({ 
-        globalCount: globalVisitorCount,
-        productCount: productVisits[productId] 
-      });
-    });
-    
-    app.get('/all-product-counts', (req, res) => {
-      res.json({
-        globalCount: globalVisitorCount,
-        productCounts: productVisits
-      });
-    });
-    
 };
 
 

@@ -13,7 +13,7 @@ var messageModel = new Schema({
         messages  : { type: String, required: true },
         date      : { type: Date }
     }],
-});
+}, { timestamps: true });
 
 var message = mongoose.model("message", messageModel, "message");
 module.exports = message;

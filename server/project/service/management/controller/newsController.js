@@ -17,7 +17,8 @@ exports.getNewsController = async function (query) {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.getsNewsController = async function () {
     return new Promise((resolve, reject) => {
         newsModel
@@ -31,7 +32,8 @@ exports.getsNewsController = async function () {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.addNewsController = async function (data) {
     return new Promise((resolve, reject) => {
         var newsModels = new newsModel(data);
@@ -44,7 +46,8 @@ exports.addNewsController = async function (data) {
                 reject(resInfo);
             });
     });
-}
+};
+
 exports.onUpdate = async function (query, data) {
     return new Promise((resolve, reject) => {
         newsModel
@@ -61,7 +64,8 @@ exports.onUpdate = async function (query, data) {
                 reject(err);
             });
     });
-}
+};
+
 exports.deleteNewsController = async function (query) {
     return new Promise((resolve, reject) => {
         newsModel
@@ -80,7 +84,7 @@ exports.deleteNewsController = async function (query) {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
-}
+};
 
 
 
