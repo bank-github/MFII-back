@@ -80,29 +80,30 @@ module.exports = function () {
       app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
       app.use(serveStatic("public", { index: ["index.html", "index.htm"] }));
 
-      app.use(function (req, res, next) {
-        if (req.method === "OPTIONS") {
-          var headers = {};
-          // IE8 does not allow domains to be specified, just the *
-          // headers["Access-Control-Allow-Origin"] = req.headers.origin;
-          headers["Access-Control-Allow-Origin"] = "*";
-          headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, PATCH, OPTIONS";
-          headers["Access-Control-Allow-Credentials"] = false;
-          headers["Access-Control-Max-Age"] = "86400"; // 24 hours
-          headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization,Access-Control-Allow-Headers, X-Access-Token,X-Sid, X-Zid, company, projectid, projectkey, mobile, xid, version, platform, Api-Version";
-          res.writeHead(200, headers);
-          res.end();
-        } else {
-          // res.header["X-Frame-Options"] = "ALLOW-FROM http://localhost";
-          res.header("Access-Control-Allow-Origin", "*");
-          res.header(
-            "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept, Authorization,Access-Control-Allow-Headers, X-Access-Token,X-Sid, X-Zid,, company, projectid, projectkey,mobile, xid, version, platform, Api-Version"
-          );
-          next();
-        }
-      });
+      // Middleware to handle CORS headers
+      app.use(function(req, res, next) {
+        // Allow requests from the specified origin (change as needed)
+        res.header("Access-Control-Allow-Origin", "http://localhost:3000");
 
+        // Allow the following methods
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+
+        // Allow the following headers
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Headers, X-Access-Token, X-Sid, X-Zid, company, projectid, projectkey, mobile, xid, version, platform, Api-Version");
+
+        // Allow credentials (cookies, authorization headers, etc)
+        res.header("Access-Control-Allow-Credentials", "true");
+
+        // Handle preflight requests
+        if (req.method === "OPTIONS") {
+          // Set the cache age for preflight requests (in seconds)
+          res.header("Access-Control-Max-Age", "86400"); // 24 hours
+          return res.sendStatus(200);
+        }
+
+        // Pass control to the next handler
+        next();
+      });      
       // counter visitor
       app.use(async function (request, response, next) {
         try {
