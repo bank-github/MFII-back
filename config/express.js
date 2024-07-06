@@ -74,27 +74,47 @@ module.exports = function () {
       //     browserSniff: true,
       //   }));
 
-      app.use('/uploads', express.static('uploads'));
+      app.use('/api/uploads', express.static('uploads'));
       app.use(sass({ src: "./sass", dest: "./public/css", debug: true, outputStyle: "compressed", }));
       app.use(express.static(path.join(__dirname, "./public")));
       app.use(express.static(path.join(__dirname, "../node_modules/bootstrap/dist")));
       app.use(serveStatic("public", { index: ["index.html", "index.htm"] }));
 
       app.use(function (req, res, next) {
+      //   app.use(function(req, res, next) {
+      //     const allowedOrigins = ['http://web.ip-mfii.com', 'http://192.168.10.184:8080'];
+      //     const origin = req.headers.origin;
+      //     if (allowedOrigins.includes(origin)) {
+      //         res.header("Access-Control-Allow-Origin", origin);
+      //     }
+      //     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Headers, X-Access-Token, X-Sid, X-Zid, company, projectid, projectkey, mobile, xid, version, platform, Api-Version");
+      //     res.header("Access-Control-Allow-Credentials", true);
+      //     if (req.method === "OPTIONS") {
+      //         res.sendStatus(200);
+      //     } else {
+      //         next();
+      //     }
+      // });
+        const origin = req.headers.origin;
+        console.log('Incoming request from origin:', origin);
         if (req.method === "OPTIONS") {
           var headers = {};
           // IE8 does not allow domains to be specified, just the *
           // headers["Access-Control-Allow-Origin"] = req.headers.origin;
-          headers["Access-Control-Allow-Origin"] = "*";
+          headers["Access-Control-Allow-Origin"] = "http://localhost:8080";
           headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, PATCH, OPTIONS";
-          headers["Access-Control-Allow-Credentials"] = false;
+          headers["Access-Control-Allow-Credentials"] = true;
           headers["Access-Control-Max-Age"] = "86400"; // 24 hours
           headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization,Access-Control-Allow-Headers, X-Access-Token,X-Sid, X-Zid, company, projectid, projectkey, mobile, xid, version, platform, Api-Version";
           res.writeHead(200, headers);
           res.end();
         } else {
           // res.header["X-Frame-Options"] = "ALLOW-FROM http://localhost";
-          res.header("Access-Control-Allow-Origin", "*");
+          res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+          res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, PATCH, OPTIONS");
+          res.header("Access-Control-Allow-Credentials", true);
+          res.header("Access-Control-Max-Age", "86400");
           res.header(
             "Access-Control-Allow-Headers",
             "Origin, X-Requested-With, Content-Type, Accept, Authorization,Access-Control-Allow-Headers, X-Access-Token,X-Sid, X-Zid,, company, projectid, projectkey,mobile, xid, version, platform, Api-Version"

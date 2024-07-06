@@ -2,7 +2,7 @@ FROM node:20.14.0
 
 WORKDIR /usr/src/app/MFii-Backend
 
-COPY ./package.json .
+COPY package.json .
 
 RUN rm -rf node_modules
 RUN npm install
