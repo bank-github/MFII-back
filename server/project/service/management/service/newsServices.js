@@ -48,9 +48,9 @@ exports.addNewsServices = async function (request, response, next) {
         }
         if (request.body.linkImage) {
             data.linkImage = request.body.linkImage.split(',');
+        }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
-        }
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)
