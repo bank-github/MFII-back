@@ -53,18 +53,18 @@ var middleware = require("../../helpers/middleware");
   //================================================\\
 
 
-  //================ staff can use =================\\
+  //================ staff can use (admin can use also) =================\\
   //message
   //news
-  app.post(api + staffPath + "/addNews", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
-  app.get(api + staffPath + "/getNews/:id", middleware.verifyTokenAndRole("staff"), newsManagement.getNewsByIdService);// get specific news via id
-  app.delete(api + staffPath + "/deleteNews/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
+  app.post(api + staffPath + "/addNews", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
+  app.get(api + staffPath + "/getNews/:id", middleware.verifyTokenAndRole(["staff", "admin"]), newsManagement.getNewsByIdService);// get specific news via id
+  app.delete(api + staffPath + "/deleteNews/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
   //research
-  app.post(api + staffPath + "/addResearch", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), researchManagement.addResearchServices);// add research and image
-  app.delete(api + staffPath + "/deleteResearch/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
-  app.patch(api + staffPath + "/deleteFileResearch/:model/:id", middleware.verifyTokenAndRole("staff"), middleware.deleteFileSome, researchManagement.deleteFileResearchServices);
-  app.patch(api + staffPath + "/addFileResearch/:id", middleware.verifyTokenAndRole("staff"), middleware.upload.any(), researchManagement.addFileResearchServices);
-  app.patch(api + staffPath + "/updateResearchData/:id", middleware.verifyTokenAndRole("staff"), researchManagement.updateDataResearchServices);
+  app.post(api + staffPath + "/addResearch", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), researchManagement.addResearchServices);// add research and image
+  app.delete(api + staffPath + "/deleteResearch/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
+  app.patch(api + staffPath + "/deleteFileResearch/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileSome, researchManagement.deleteFileResearchServices);
+  app.patch(api + staffPath + "/addFileResearch/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), researchManagement.addFileResearchServices);
+  app.patch(api + staffPath + "/updateResearchData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), researchManagement.updateDataResearchServices);
   //user
   //================================================\\
 
