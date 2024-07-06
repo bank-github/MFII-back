@@ -82,11 +82,11 @@ var middleware = require("../../helpers/middleware");
 
   //========== login user and staff can use ==========\\
   //message
-  app.get(api + "/mesGetData", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.getRequestService);
-  app.get(api + "/mesDetail/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.getMessageReplyService);
-  app.patch(api + '/mesReplyUpdate/:id', middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.updateMessageReplyService);
-  app.patch(api + "/mesUpdate/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.updateRequestService);
-  app.delete(api + "/mesDelete/:id", middleware.verifyTokenAndRole(["user", "staff"]), mesManagement.deleteRequestService);
+  app.get(api + "/mesGetData", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.getRequestService);
+  app.get(api + "/mesDetail/:id", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.getMessageReplyService);
+  app.patch(api + '/mesReplyUpdate/:id', middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.updateMessageReplyService);
+  app.patch(api + "/mesUpdate/:id", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.updateRequestService);
+  app.delete(api + "/mesDelete/:id", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.deleteRequestService);
   //news
   //research
   //user
