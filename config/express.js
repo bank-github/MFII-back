@@ -82,7 +82,7 @@ module.exports = function () {
 
       app.use(function(req, res, next) {
         // Allow requests from the specified origin (change as needed)
-        res.header("Access-Control-Allow-Origin", "http://172.25.46.35:3000");
+        res.header("Access-Control-Allow-Origin", "http://localhost:3000");
       
         // Allow the following methods
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
