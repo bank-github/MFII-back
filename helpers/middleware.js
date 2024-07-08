@@ -220,7 +220,7 @@ exports.downloadCsv = async function (request, response) {
 
         const csvWithBom = '\uFEFF' + csv;
 
-        const filePath = path.join(__dirname, 'data.csv');
+        const filePath = path.join('uploads/others', 'data.csv');
         fs.writeFileSync(filePath, csvWithBom);
 
         response.download(filePath, query+'.csv', (err) => {
