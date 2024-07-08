@@ -10,7 +10,7 @@ var userModel = new Schema({
      lastName        : {type: String, require: true},
      phoneNumber     : {type: String, require: true},
      businessType     : {type:String, require: true},
-     businessName     : { type: String, require: true },
+     businessName     : { type: String, require: true, default: "-"},
      role            : {type: String, require: true, default: "user"},
      status          : {type: String, require: true, default: "active"}
 }, { timestamps: true });
