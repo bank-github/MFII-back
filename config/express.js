@@ -102,7 +102,7 @@ module.exports = function () {
           var headers = {};
           // IE8 does not allow domains to be specified, just the *
           // headers["Access-Control-Allow-Origin"] = req.headers.origin;
-          headers["Access-Control-Allow-Origin"] = "https://ip-mfii.mfu.ac.th:8080";
+          headers["Access-Control-Allow-Origin"] = "http://localhost8080";
           headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, PATCH, OPTIONS";
           headers["Access-Control-Allow-Credentials"] = true;
           headers["Access-Control-Max-Age"] = "86400"; // 24 hours
@@ -111,7 +111,7 @@ module.exports = function () {
           res.end();
         } else {
           // res.header["X-Frame-Options"] = "ALLOW-FROM http://localhost";
-          res.header("Access-Control-Allow-Origin", "https://ip-mfii.mfu.ac.th:8080");
+          res.header("Access-Control-Allow-Origin", "http://localhost8080");
           res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, PATCH, OPTIONS");
           res.header("Access-Control-Allow-Credentials", true);
           res.header("Access-Control-Max-Age", "86400");
