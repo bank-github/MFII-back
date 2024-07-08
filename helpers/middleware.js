@@ -161,9 +161,6 @@ const upload = multer({
 
 exports.upload = upload;
 
-<<<<<<< HEAD
-const up = []
-=======
 exports.downloadCsv = async function (request, response) {
     try {
         const modelName = 'counter';  // model counter
@@ -237,10 +234,3 @@ exports.downloadCsv = async function (request, response) {
         response.status(500).json({ result: {}, description: "Internal Server Error" });
     }
 };
-
-
-
-
-
-
->>>>>>> parent of 3278433 (Revert "edit middleware")
