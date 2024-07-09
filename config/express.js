@@ -169,8 +169,9 @@ module.exports = function () {
           const productId = request.query.researchId;
           if (productId) {
             const sessionIds = visit.productSessionIds.get(productId) || [];
-
+            console.log("session ID => " + sessionIds);
             const sessionExits = sessionIds.some(entry => entry.sessionId == sessionId);
+            console.log("session Exit => " + sessionExits);
             if(!sessionExits){
               visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
               sessionIds.push({sessionId: sessionId, createdAt: currentTime});
