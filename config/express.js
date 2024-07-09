@@ -92,7 +92,7 @@ module.exports = function () {
         //         next();
         //     }
         // });
-        
+
         const allowedOrigins = ['http://localhost:8080'];
         const origin = req.headers.origin;
 
@@ -130,6 +130,7 @@ module.exports = function () {
         try {
 
           const sessionId = request.cookies.sessionId;
+          const currentTime = new Date();
           let visit = await counterModel.findOne();
 
           if (!visit) {
@@ -163,7 +164,14 @@ module.exports = function () {
           // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง productId มาด้วย)
           const productId = request.query.researchId;
           if (productId) {
-            visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
+            const sessionIds = visit.productSessionIds.get(productId) || [];
+
+            const sessionExits = sessionIds.some(entry => entry.sessionId == sessionId);
+            if(!sessionExits){
+              visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
+              sessionIds.push({sessionId, createdAt: currentTime});
+              visit.productSessionIds.set(productId, sessionId);
+            }
           }
 
           await visit.save();
