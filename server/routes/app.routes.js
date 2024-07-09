@@ -91,6 +91,9 @@ var middleware = require("../../helpers/middleware");
   //research
   //user
   //================================================\\
+  
+  // csv download 
+  app.get(api +'/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
 
 };
 
