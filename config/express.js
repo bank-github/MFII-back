@@ -173,7 +173,7 @@ module.exports = function () {
             const sessionExits = sessionIds.some(entry => entry.sessionId == sessionId);
             if(!sessionExits){
               visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
-              sessionIds.push({sessionId, createdAt: currentTime});
+              sessionIds.push({sessionId: sessionId, createdAt: currentTime});
               visit.productSessionIds.set(productId, sessionId);
             }
           }
