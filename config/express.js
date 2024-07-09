@@ -161,6 +161,10 @@ module.exports = function () {
 
           }
 
+          if (!visit.productSessionIds) {
+            visit.productSessionIds = new Map();
+          }
+
           // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง productId มาด้วย)
           const productId = request.query.researchId;
           if (productId) {
