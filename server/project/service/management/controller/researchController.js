@@ -1,4 +1,5 @@
 var researchModel = require('../models/researchModel');
+var counterModel = require('../models/counterModel');
 
 exports.getResearchController = async function (query) {
     return new Promise((resolve, reject) => {
@@ -47,13 +48,28 @@ exports.addResearchController = async function (data) {
     });
 };
 
-exports.deleteResearchController = async function (query) {
+exports.deleteResearchController = async function (query, id) {
     return new Promise((resolve, reject) => {
         researchModel
             .findOneAndDelete(query)
-            .then(deleteResearch => {
+            .then(async deleteResearch => {
                 // find Research and delete
                 if (deleteResearch) {
+                    // delete counter product that deleted
+                    const counter = await counterModel.findOne();
+                    if (counter) {
+                        // Remove the specific ID from productAccess
+                        if (counter.productSessionIds.has(id)) {
+                            counter.productSessionIds.delete(id);
+                        }
+
+                        // Remove the specific ID from productSessionIds
+                        if (counter.productAccess.has(id)) {
+                            counter.productAccess.delete(id);
+                        }
+                        // Save the updated counter model document
+                        await counter.save();
+                    }
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
@@ -67,10 +83,10 @@ exports.deleteResearchController = async function (query) {
     });
 };
 
-exports.updateFileResearchController = async function (query,update) {
+exports.updateFileResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
-            .findOneAndUpdate(query,update)
+            .findOneAndUpdate(query, update)
             .then(updateResearch => {
                 // find Research and delete
                 if (updateResearch) {
@@ -87,14 +103,14 @@ exports.updateFileResearchController = async function (query,update) {
     });
 };
 
-exports.updateDataResearchController = async function (query,update) {
+exports.updateDataResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
-        .findByIdAndUpdate(query._id, update, { new: true })
+            .findByIdAndUpdate(query._id, update, { new: true })
             .then(updateResearch => {
                 // find Research and delete
                 if (updateResearch) {
-                    var resInfo = { result: {updateResearch}, code: { codeNo: 200, description: 20000 } }
+                    var resInfo = { result: { updateResearch }, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
                 //no Research in database
@@ -106,6 +122,3 @@ exports.updateDataResearchController = async function (query,update) {
             });
     });
 };
-
-
-

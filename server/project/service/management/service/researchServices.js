@@ -89,7 +89,7 @@ exports.deleteResearchServices = async function (request, response, next) {
     try {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
-        const doc = await researchController.deleteResearchController(query._id);
+        const doc = await researchController.deleteResearchController(query._id, request.params.id);
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
