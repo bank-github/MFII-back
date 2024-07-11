@@ -93,7 +93,7 @@ var middleware = require("../../helpers/middleware");
   //================================================\\
   
   // csv download 
-  app.get('/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
+  app.get(api + '/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
 
 };
 
