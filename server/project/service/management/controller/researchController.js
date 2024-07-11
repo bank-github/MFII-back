@@ -74,7 +74,7 @@ exports.updateFileResearchController = async function (query,update) {
             .then(async updateResearch => {
                 if (updateResearch) {
                     // ตรวจสอบว่าไม่มีไฟล์ใดใน filePath ที่มีคำนำหน้า uploads/image/
-                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads/image/'));
+                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\'));
 
                     if (!hasImageFile) {
                         // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
