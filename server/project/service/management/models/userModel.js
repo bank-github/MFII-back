@@ -8,9 +8,12 @@ var userModel = new Schema({
      password        : {type: String, require: true},
      firstName       : {type: String, require: true},
      lastName        : {type: String, require: true},
-     PhoneNumber     : {type: String, require: true},
-     role            : {type: String, require: true, default: "user"}, //or number 0=user, 1=staff, 2=admin
-});
+     phoneNumber     : {type: String, require: true},
+     businessType     : {type:String, require: true},
+     businessName     : { type: String, require: true, default: "-"},
+     role            : {type: String, require: true, default: "user"},
+     status          : {type: String, require: true, default: "active"}
+}, { timestamps: true });
 
 var user = mongoose.model('user', userModel, 'user');
 module.exports = user;

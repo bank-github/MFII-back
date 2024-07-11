@@ -4,11 +4,13 @@ var http = require('http');
 var https = require('https');
 var fs = require('fs');
 var cfg = require('./config/config');
+var cornJob = require('./helpers/countProductCheck');
+
+cornJob();
+
 /**
  * Get port from environment and store in Express.
  */
-
-
 var port = cfg.host.port;
 
 // var options = {
@@ -88,5 +90,5 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    console.log('server start at localhost:7770')
+    console.log('server start at http://localhost:7770')
 }

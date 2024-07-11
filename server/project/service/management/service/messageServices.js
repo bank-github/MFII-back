@@ -1,106 +1,124 @@
 var mongo = require('mongodb');
 var messageController = require('../controller/messageController');
+var resMsg = require('../../../../../config/message');
 
-exports.onQuery = async function (request, response, next) {
+exports.getRequestService = async function (request, response, next) {
     try {
-
-        var querys = {};
-        const doc = await messageController.onQuery(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        query = {}
+        if (request.role == "user") {
+            query = { userId: new mongo.ObjectId(request.userId) }
+            console.log(query)
+        }
+        const doc = await messageController.getRequestController(query);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onQuerys = async function (request, response, next) {
+
+exports.getMessageReplyService = async function (request, response, next) {
     try {
+        var query = {}
+        query._id = new mongo.ObjectId(request.params.id)
 
-        var querys = {};
-
-        const doc = await messageController.onQuerys(querys);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
+        const doc = await messageController.getMessageReplyController(query);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
     } catch (err) {
-        console.log(err);
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onCreate = async function (request, response, next) {
+
+
+exports.updateMessageReplyService = async function (request, response, next) {
     try {
-        const doc = await messageController.onCreate(request.body);
+        const messageId = request.params.id;
+        const messageReplyData = request.body;
+        messageReplyData.user = request.userId;
+        const now = new Date();
+        messageReplyData.date = now;
 
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
-
+        const doc = await messageController.updateMessageReplyController(messageId, messageReplyData);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
     } catch (err) {
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onUpdate = async function (request, response, next) {
+
+exports.createRequestService = async function (request, response, next) {
     try {
-
-        var query = {};
-        query._id = new mongo.ObjectId(request.body._id);
-
-        const doc = await messageController.onUpdate(query,request.body);
-
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        //request body from db
+        var data = request.body;
+        const dateNow = new Date();
+        data.messageReply.date = dateNow;
+        data.userId = request.userId;
+        //add data
+        const doc = await messageController.createRequestController(data);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-        
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
-exports.onDelete = async function (request, response, next) {
+
+exports.updateRequestService = async function (request, response, next) {
     try {
+        const query = {};
+        query._id = new mongo.ObjectId(request.params.id);
 
-        var query = {};
-        query._id = new mongo.ObjectId(request.body.id);
-        const doc = await messageController.onDelete(query);
-
-        var resData = await resMsg.onMessage_Response(0,20000);
-        resData.data = doc;
-        response.status(200).json(resData);
+        const doc = await messageController.updateRequestController(query, request.body);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-
-        var resData = await resMsg.onMessage_Response(0,40400);
-        response.status(404).json(resData);
+        if (err.code) {
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
-
 };
-exports.onMessage_Response = async function (number, code, res) {
+
+exports.deleteRequestService = async function (request, response, next) {
     try {
+        //หาไอดี user
+        const query = {};
+        query._id = new mongo.ObjectId(request.params.id);
 
-        var query = {};
-        (api_number != null)? query.number = number : query.number = 0;
-        (code != null)? query.code = code : null;
-
-        var doc =  await infomation_messages.onQuery(query);
-        delete doc._id;
-        delete doc.create;
-        delete doc.update;
-        delete doc.__v;
-        delete doc.number;
-        delete doc.enable;
-
-        return doc;
+        // Delete data
+        const doc = await messageController.deleteRequestController(query);
+        response.status(doc.code.codeNO).json({ result: doc.result, detail: resMsg.getMsg(doc.code.description) });
 
     } catch (err) {
-        return err;
+        if (err.code != null) {
+            console.log(err.error);
+            response.status(err.code.codeNO).json({ result: err.error, detail: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, detail: resMsg.getMsg(50000) });
+        }
     }
 };
