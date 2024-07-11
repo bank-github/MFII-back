@@ -159,7 +159,6 @@ exports.deleteRequestController = async function (query) {
         var messageModels = new messageModel(query);
         messageModels
             .deleteOne(query)
-            .exec()
             .then(result => {
                 if (result.deletedCount === 0) {
                     var rejInfo = { error: {}, code: { codeNO: 404, description: 40402 } };
