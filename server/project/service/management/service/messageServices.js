@@ -5,8 +5,8 @@ var resMsg = require('../../../../../config/message');
 exports.getRequestService = async function (request, response, next) {
     try {
         query = {}
-        if(request.role == "user"){
-            query = {userId: new mongo.ObjectId(request.userId)}
+        if (request.role == "user") {
+            query = { userId: new mongo.ObjectId(request.userId) }
             console.log(query)
         }
         const doc = await messageController.getRequestController(query);
@@ -67,6 +67,8 @@ exports.createRequestService = async function (request, response, next) {
     try {
         //request body from db
         var data = request.body;
+        const dateNow = new Date();
+        data.messageReply.date = dateNow;
         data.userId = request.userId;
         //add data
         const doc = await messageController.createRequestController(data);
