@@ -7,6 +7,7 @@ const mongo = require('mongodb');
 const sanitizeFilename = require('sanitize-filename');
 const { Parser } = require('json2csv');
 const resMsg = require('../config/message');
+const { CreateSessionOutputFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const secretKey = "MFII-project-2024";
 
 const models = {
@@ -98,8 +99,7 @@ exports.deleteFileDynamic = async function (request, response, next) {
 
 exports.deleteFileSome = async function (request, response, next) {
     try {
-        const Model = models['counter'];
-
+        const Model = models[request.params.model];
         if (!request.body.filePath) {
             return response.status(400).json({ result: {}, description: "Invalid file" });
         }
@@ -108,7 +108,6 @@ exports.deleteFileSome = async function (request, response, next) {
             return response.status(400).json({ result: {}, description: "Invalid model" });
         }
         const query = { _id: new mongo.ObjectId(request.params.id) };
-        
         const document = await Model.findById(query._id);
         if (!document) {
             return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });

@@ -9,6 +9,7 @@ var counterModel = new Schema({
      monthlyAccess: { type: Map, of: Number, default: {} },
      dailyAccess: { type: Map, of: Number, default: {} },
      productAccess: { type: Map, of: Number, default: {} },
+     productSessionIds: { type: Map, of: [{ sessionId: String, createdAt: Date }], default: {} }
    }, { timestamps: true });
 
 var counter = mongoose.model('counter', counterModel, 'counter');
