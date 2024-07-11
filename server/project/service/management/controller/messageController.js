@@ -1,4 +1,5 @@
 var messageModel = require('../models/messageModel');
+var userModel = require('../models/userModel')
 
 exports.getRequestController = async function (query) {
     return new Promise((resolve, reject) => {
@@ -85,15 +86,25 @@ exports.getMessageReplyController = async function (query) {
                     var rejInfo = { error: 'Message not found', code: { codeNO: 404, description: 40401 } };
                     reject(rejInfo);
                 } else {
-                    let newMesReply = []
-                    doc[0].messageReply.forEach(async reply => {
-                        const { _id, ...newReply } = reply;
-                        newMesReply.push(newReply);
-                    })
-                    doc.messageReply = newMesReply;
-                    var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
-                    resolve(resInfo);
-                }
+                    let newMessageReply = [];
+                    let promiseArray = doc[0].messageReply.map(reply => {
+                        return userModel.findById(reply.user, { firstName: 1, lastName: 1, role: 1, _id: 0 }).then(user => {
+                            console.log(user);
+                            console.log(reply);
+                            reply.user = user;
+                            newMessageReply.push(reply);
+                            console.log(reply);
+                        });
+                    });
+                
+                    Promise.all(promiseArray).then(() => {
+                        doc[0].messageReply = newMessageReply;
+                        var resInfo = { result: doc, code: { codeNO: 200, description: 200 } };
+                        resolve(resInfo);
+                    }).catch(error => {
+                        reject(error);
+                    });
+                }                
             }).catch(err => {
                 var rejInfo = { error: err, code: { codeNO: 500, description: 50002 } };
                 reject(rejInfo);
@@ -159,7 +170,6 @@ exports.deleteRequestController = async function (query) {
         var messageModels = new messageModel(query);
         messageModels
             .deleteOne(query)
-            .exec()
             .then(result => {
                 if (result.deletedCount === 0) {
                     var rejInfo = { error: {}, code: { codeNO: 404, description: 40402 } };
