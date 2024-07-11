@@ -89,8 +89,8 @@ exports.deleteResearchServices = async function (request, response, next) {
     try {
         var query = {};
         query._id = new mongo.ObjectId(request.params.id);
-        const doc = await researchController.deleteResearchController(query._id);
-        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+        const doc = await researchController.deleteResearchController(query._id, request.params.id);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)
@@ -107,10 +107,10 @@ exports.deleteFileResearchServices = async function (request, response, next) {
         var query = { _id: new mongo.ObjectId(request.params.id) };
         var update = { $pull: { filePath: request.body.filePath } };
         const doc = await researchController.updateFileResearchController(query, update);
-        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
-            console.log(err.error)
+            console.log(err.error);
             response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
         } else {
             console.log(err);
@@ -127,7 +127,7 @@ exports.addFileResearchServices = async function (request, response, next) {
             update.$push.filePath.push(file.path); // Push each file's path to the update object
         });
         const doc = await researchController.updateFileResearchController(query, update);
-        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)
@@ -145,7 +145,7 @@ exports.updateDataResearchServices = async function (request, response, next) {
         var update = request.body;
 
         const doc = await researchController.updateDataResearchController(query, update);
-        response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)

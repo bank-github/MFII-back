@@ -163,67 +163,53 @@ exports.upload = upload;
 
 exports.downloadCsv = async function (request, response) {
     try {
-        const modelName = 'counter';  // model counter
+        const modelName = 'counter';
         const Model = models[modelName];
-        
+        const query = request.query.fields;
+
         if (!Model) {
             return response.status(400).json({ result: {}, description: "Invalid model" });
         }
 
-        const query = request.query.fields;
         const counterData = await Model.find().lean().exec();
         if (counterData.length === 0) {
             return response.status(404).json({ result: {}, description: "No data found" });
         }
 
-        let researchMap = new Map();
+        let colName;
+        let processedData = [];
 
-        if (query === 'productAccess') {
-            const ResearchModel = models['research'];  // model research
-            if (!ResearchModel) {
-                return response.status(400).json({ result: {}, description: "Invalid research model" });
-            }
-
-            const researchData = await ResearchModel.find().lean().exec();
-            if (researchData.length === 0) {
-                return response.status(404).json({ result: {}, description: "No research data found" });
-            }
-
-            // สร้างแผนที่ของ _id และ nameOnMedia จาก research
-            researchData.forEach(research => {
-                researchMap.set(String(research._id), research.nameOnMedia);
-            });
+        switch (query) {
+            case 'productAccess':
+                colName = "รายชื่องานวิจัย";
+                processedData = await handleProductAccess(query, counterData);
+                break;
+            case 'yearlyAccess':
+                colName = "ยอดเข้าชมประจำปี";
+                processedData = processAccessData(counterData, query, colName);
+                break;
+            case 'monthlyAccess':
+                colName = "ยอดเข้าชมประจำเดือน";
+                processedData = processAccessData(counterData, query, colName);
+                break;
+            case 'dailyAccess':
+                colName = "ยอดเข้าชมประจำวัน";
+                processedData = processAccessData(counterData, query, colName);
+                break;
+            default:
+                return response.status(400).json({ result: {}, description: "Invalid query parameter" });
         }
 
-        // ประมวลผลข้อมูลเพื่อให้ตรงกับรูปแบบที่ต้องการ
-        const processedData = [];
-        counterData.forEach(row => {
-            const Access = row[query];  // ใช้ query แทน dailyAccess
-            if (typeof Access === 'object') {
-                for (const [date, value] of Object.entries(Access)) {
-                    const entry = {};
-                    if (query === 'productAccess' && researchMap.has(date)) {
-                        entry[query] = researchMap.get(date);  // ใช้ nameOnMedia แทน date
-                    } else {
-                        entry[query] = date;  // ถ้าไม่เหมือนก็ใช้ date ตามเดิม
-                    }
-                    entry['view'] = value;
-                    processedData.push(entry);
-                }
-            }
-        });
-
-        const fields = [query, 'view'];
+        const fields = [colName, 'ยอดการเข้าชม'];
         const opts = { fields, quote: '"', delimiter: ',' };
         const parser = new Parser(opts);
         const csv = parser.parse(processedData);
 
         const csvWithBom = '\uFEFF' + csv;
-
         const filePath = path.join(__dirname, 'data.csv');
         fs.writeFileSync(filePath, csvWithBom);
 
-        response.download(filePath, query+'.csv', (err) => {
+        response.download(filePath, `${query}.csv`, (err) => {
             if (err) {
                 console.error(err);
             }
@@ -234,3 +220,48 @@ exports.downloadCsv = async function (request, response) {
         response.status(500).json({ result: {}, description: "Internal Server Error" });
     }
 };
+
+async function handleProductAccess(query, counterData) {
+    const ResearchModel = models['research'];
+    if (!ResearchModel) {
+        throw new Error("Invalid research model");
+    }
+
+    const researchData = await ResearchModel.find().lean().exec();
+    if (researchData.length === 0) {
+        throw new Error("No research data found");
+    }
+
+    const researchMap = new Map();
+    researchData.forEach(research => {
+        researchMap.set(String(research._id), research.nameOnMedia);
+    });
+
+    const processedData = [];
+    researchMap.forEach((nameOnMedia, researchId) => {
+        const entry = { 'รายชื่องานวิจัย': nameOnMedia, 'ยอดการเข้าชม': 0 };
+        counterData.forEach(row => {
+            const Access = row[query];
+            if (Access && Access[researchId]) {
+                entry['ยอดการเข้าชม'] = Access[researchId];
+            }
+        });
+        processedData.push(entry);
+    });
+
+    processedData.sort((a, b) => b['ยอดการเข้าชม'] - a['ยอดการเข้าชม']);
+    return processedData;
+}
+
+function processAccessData(counterData, query, colName) {
+    const processedData = [];
+    counterData.forEach(row => {
+        const Access = row[query];
+        if (typeof Access === 'object') {
+            for (const [date, value] of Object.entries(Access)) {
+                processedData.push({ [colName]: date, 'ยอดการเข้าชม': value });
+            }
+        }
+    });
+    return processedData;
+}

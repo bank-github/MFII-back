@@ -70,24 +70,34 @@ exports.deleteResearchController = async function (query) {
 exports.updateFileResearchController = async function (query,update) {
     return new Promise((resolve, reject) => {
         researchModel
-            .findOneAndUpdate(query,update)
-            .then(updateResearch => {
-                // find Research and delete
+            .findOneAndUpdate(query, update, { new: true }) // เพิ่ม { new: true } เพื่อให้ได้ผลลัพธ์ที่อัปเดตล่าสุด
+            .then(async updateResearch => {
                 if (updateResearch) {
-                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
+                    // ตรวจสอบว่าไม่มีไฟล์ใดใน filePath ที่มีคำนำหน้า uploads/image/
+                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads/image/'));
+
+                    if (!hasImageFile) {
+                        // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
+                        await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
+                    } else {
+                        // ลบ uploads/image/noImage.jpg จาก array filePath
+                        await researchModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
+                    }
+
+                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
                     resolve(resInfo);
-                }
-                //no Research in database
-                else {
+                } else {
                     reject({ error: {}, code: { codeNo: 404, description: 40402 } });
                 }
-            }).catch(err => {
+            })
+            .catch(err => {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
     });
 };
 
-exports.updateDataResearchController = async function (query,update) {
+
+exports.updateDataResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
         .findByIdAndUpdate(query._id, update, { new: true })
