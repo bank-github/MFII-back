@@ -45,17 +45,10 @@ exports.addNewsServices = async function (request, response, next) {
 
         // add all links from request body
         if (request.body.linkVideo) {
-<<<<<<< HEAD
-            data.linkVideo = request.body.linkVideo.split(',');
-        }
-        if (request.body.linkImage) {
-            data.linkImage = request.body.linkImage.split(',');
-=======
             data.linkVideo = request.body.linkVideo;
         }
         if (request.body.linkImage) {
             data.linkImage = request.body.linkImage;
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
         }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });

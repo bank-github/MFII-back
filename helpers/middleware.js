@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-// Middelware
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-var fs = require('fs');
-var path = require('path');
-var mongo = require('mongodb');
-const sanitizeFilename = require('sanitize-filename');
-const resMsg = require('../config/message');
-const secretKey = "MFII-project-2023";
-=======
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
@@ -20,7 +9,6 @@ const { Parser } = require('json2csv');
 const resMsg = require('../config/message');
 const { CreateSessionOutputFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const secretKey = "MFII-project-2024";
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
 
 const models = {
     news: require('../server/project/service/management/models/newsModel'),
@@ -29,21 +17,8 @@ const models = {
     //add other model
 };
 
-<<<<<<< HEAD
-// Test Generate a JWT token
-// const payload = {
-//     userId: 'testUserId',
-//     role: 'staff' // Change this to 'user', 'admin', etc., for different roles
-// };
-// // JWT token expires in 1 hour
-// const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
-// console.log('JWT Token:', token);
-
-//verify role for frontend
-=======
 const app = express();
 
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
 exports.verify = function (request, response) {
     const token = request.headers.authorization;
     if (!token) {
@@ -55,26 +30,14 @@ exports.verify = function (request, response) {
         }
         if (decoded.role == "admin") {
             return response.status(200).json({ resutl: { number: 0 }, description: resMsg.getMsg(20000) })
-<<<<<<< HEAD
-        }
-        else if (decoded.role == "staff") {
-            return response.status(200).json({ resutl: { number: 1 }, description: resMsg.getMsg(20000) })
-        }
-        else {
-=======
         } else if (decoded.role == "staff") {
             return response.status(200).json({ resutl: { number: 1 }, description: resMsg.getMsg(20000) })
         } else {
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
             return response.status(200).json({ resutl: { number: 2 }, description: resMsg.getMsg(20000) })
         }
     });
 };
 
-<<<<<<< HEAD
-// verify user role
-=======
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
 exports.verifyTokenAndRole = function (roles) {
     return function (request, response, next) {
         const token = request.headers.authorization;
@@ -95,10 +58,6 @@ exports.verifyTokenAndRole = function (roles) {
     }
 };
 
-<<<<<<< HEAD
-// delete file path on local device
-=======
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
 exports.deleteFileDynamic = async function (request, response, next) {
     try {
         const modelName = request.params.model;
@@ -176,55 +135,6 @@ exports.deleteFileSome = async function (request, response, next) {
     }
 };
 
-<<<<<<< HEAD
-// delete file path on local device
-exports.deleteFileSome = async function (request, response, next) {
-    try {
-        const modelName = request.params.model;
-        const Model = models[modelName];
-
-        if (!request.body.filePath) {
-            return response.status(400).json({ result: {}, description: "Invalid file" });
-        }
-
-        if (!Model) {
-            return response.status(400).json({ result: {}, description: "Invalid model" });
-        }
-        const query = { _id: new mongo.ObjectId(request.params.id) };
-
-        const document = await Model.findById(query._id);
-        if (!document) {
-            return response.status(404).json({ result: {}, description: resMsg.getMsg(40401) });
-        }
-
-        // Delete the file, excluding noImage.jpg
-        const filePath = request.body.filePath;
-        if (filePath !== 'uploads/image/noImage.jpg') {
-            const filePath = path.join(__dirname, '../' + filePath);
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-                }
-                next();
-            });
-        } else {
-            next(); // If noImage.jpg, proceed to the next middleware without deleting
-        }
-    } catch (err) {
-        if (err.code != null) {
-            console.log(err.error);
-            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
-        } else {
-            console.log(err);
-            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
-        }
-    }
-};
-
-
-// Function to determine the destination folder for each file
-=======
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let uploadDirectory;
@@ -239,11 +149,7 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-<<<<<<< HEAD
-        let originalName = sanitizeFilename(file.originalname);
-=======
         let originalName = sanitizeFilename(file.originalname); 
->>>>>>> 0dbc5a38e9de10cb94938d2ce9e010601cc1400f
         cb(null, Date.now() + '_' + originalName);
     }
 });
