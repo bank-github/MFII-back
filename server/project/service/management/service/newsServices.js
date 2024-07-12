@@ -37,7 +37,7 @@ exports.getsNewsServices = async function (request, response, next) {
 
 exports.addNewsServices = async function (request, response, next) {
     try {
-        var data = { filePath: [], linkVideo: [], linkImage: [] };
+        var data = { filePath: [], linkVideo: [], linkImage: [], linkPage: [] };
         //add all image and file path to array
         request.files.forEach(file => {
             data.filePath.push(file.path);
@@ -49,6 +49,9 @@ exports.addNewsServices = async function (request, response, next) {
         }
         if (request.body.linkImage) {
             data.linkImage = request.body.linkImage;
+        }
+        if (request.body.linkPage) {
+            data.linkPage = request.body.linkPage;
         }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
@@ -85,6 +88,24 @@ exports.deleteNewsServices = async function (request, response, next) {
             });
         }
         response.status(doc.code.codeNo).json({ resutl: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+
+exports.updateNewsServices = async function (request, response, next) {
+    try {
+        var query = { _id: new mongo.ObjectId(request.params.id) };
+        var update = request.body;
+
+        const doc = await newsController.updateNewsController(query, update);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error)

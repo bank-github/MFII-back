@@ -59,6 +59,7 @@ var middleware = require("../../helpers/middleware");
   app.post(api + staffPath + "/addNews", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), newsManagement.addNewsServices);// add news and image
   app.get(api + staffPath + "/getNews/:id", middleware.verifyTokenAndRole(["staff", "admin"]), newsManagement.getNewsByIdService);// get specific news via id
   app.delete(api + staffPath + "/deleteNews/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, newsManagement.deleteNewsServices);// delete specific news and delete image
+  app.patch(api + staffPath + "/updateNews/:id", middleware.verifyTokenAndRole(["staff", "admin"]), newsManagement.updateNewsServices);
   //research
   app.post(api + staffPath + "/addResearch", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), researchManagement.addResearchServices);// add research and image
   app.delete(api + staffPath + "/deleteResearch/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, researchManagement.deleteResearchServices);// delete specific research and delete image
