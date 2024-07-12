@@ -165,15 +165,15 @@ module.exports = function () {
             visit.researchSessionIds = new Map();
           }
 
-          // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง productId มาด้วย)
-          const productId = request.query.researchId;
-          if (productId) {
-            const sessionIds = visit.researchSessionIds.get(productId) || [];
+          // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง researchId มาด้วย)
+          const researchId = request.query.researchId;
+          if (researchId) {
+            const sessionIds = visit.researchSessionIds.get(researchId) || [];
             const sessionExits = sessionIds.some(entry => entry.sessionId === sessionId);
             if(!sessionExits){
-              visit.researchAccess.set(productId, (visit.researchAccess.get(productId) || 0) + 1);
+              visit.researchAccess.set(researchId, (visit.researchAccess.get(researchId) || 0) + 1);
               sessionIds.push({sessionId, createdAt: currentTime});
-              visit.researchSessionIds.set(productId, sessionIds);
+              visit.researchSessionIds.set(researchId, sessionIds);
             }
           }
 

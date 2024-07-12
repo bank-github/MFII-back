@@ -16,7 +16,6 @@ exports.getStatController = async function (query) {
                 const stringThisYear = today.toISOString().slice(0, 4);
                 for (let i = 0; i < 7; i++) {
                     const date = new Date(today);
-                    console.log(date)
                     date.setDate(today.getDate() - i);
                     const dateString = date.toISOString().slice(0, 10);
                     weeklyAccess += doc.dailyAccess.get(dateString) || 0;
@@ -49,7 +48,7 @@ exports.getProductController = async function (query) {
                     var resInfo = { result: {}, code: { codeNo: 404, description: 40401 } };
                     reject(resInfo);
                 }
-                var resInfo = { result: doc.productAccess, code: { codeNo: 200, description: 20000 } };
+                var resInfo = { result: doc.researchAccess, code: { codeNo: 200, description: 20000 } };
                 resolve(resInfo);
             }).catch(err => {
                 var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
