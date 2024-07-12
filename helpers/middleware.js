@@ -121,7 +121,7 @@ exports.deleteFileSome = async function (request, response, next) {
 
         if (document.filePath) {
             let errors = [];
-            request.filePath.forEach(file => {
+            request.body.filePath.forEach(file => {
                 if (file !== 'uploads/image/noImage.jpg') {
                     const filePath = path.join(__dirname, '../' + file);
                     fs.unlink(filePath, (err) => {

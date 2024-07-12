@@ -105,9 +105,20 @@ exports.deleteResearchServices = async function (request, response, next) {
 exports.deleteFileResearchServices = async function (request, response, next) {
     try {
         var query = { _id: new mongo.ObjectId(request.params.id) };
-        var update = { $pull: { filePath: request.body.filePath } };
-        const doc = await researchController.updateFileResearchController(query, update);
-        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
+        var filePathsToRemove = request.body.filePath;
+
+        // ตรวจสอบให้แน่ใจว่า filePathsToRemove เป็น array
+        if (!Array.isArray(filePathsToRemove)) {
+            filePathsToRemove = [filePathsToRemove];
+        }
+
+        // วนลูปผ่านแต่ละ file path ที่จะลบ
+        for (let filePath of filePathsToRemove) {
+            var update = { $pull: { filePath: filePath } };
+            await researchController.updateFileResearchController(query, update);
+        }
+
+        response.status(200).json({ result: "Files removed successfully", description: resMsg.getMsg(20000) });
     } catch (err) {
         if (err.code != null) {
             console.log(err.error);
@@ -118,6 +129,7 @@ exports.deleteFileResearchServices = async function (request, response, next) {
         }
     }
 };
+
 
 exports.addFileResearchServices = async function (request, response, next) {
     try {
