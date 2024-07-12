@@ -36,7 +36,7 @@ exports.getsNewsServices = async function (request, response, next) {
 
 exports.addNewsServices = async function (request, response, next) {
     try {
-        var data = { filePath: [], linkVideo: [], linkImage: [] };
+        var data = { filePath: [], linkVideo: [], linkImage: [], linkPage: "" };
         //add all image and file path to array
         request.files.forEach(file => {
             data.filePath.push(file.path);
@@ -48,6 +48,9 @@ exports.addNewsServices = async function (request, response, next) {
         }
         if (request.body.linkImage) {
             data.linkImage = request.body.linkImage;
+        }
+        if (request.body.linkPage) {
+            data.linkPage = request.body.linkPage;
         }
         const doc = await newsController.addNewsController(data);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
