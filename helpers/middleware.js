@@ -195,9 +195,9 @@ exports.downloadCsv = async function (request, response) {
         let processedData = [];
 
         switch (query) {
-            case 'productAccess':
+            case 'researchAccess':
                 colName = "รายชื่องานวิจัย";
-                processedData = await handleProductAccess(query, counterData);
+                processedData = await handleResearchAccess(query, counterData);
                 break;
             case 'yearlyAccess':
                 colName = "ยอดเข้าชมประจำปี";
@@ -236,7 +236,7 @@ exports.downloadCsv = async function (request, response) {
     }
 };
 
-async function handleProductAccess(query, counterData) {
+async function handleResearchAccess(query, counterData) {
     const ResearchModel = models['research'];
     if (!ResearchModel) {
         throw new Error("Invalid research model");
