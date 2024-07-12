@@ -52,11 +52,11 @@ exports.deleteResearchController = async function (query, id) {
     return new Promise((resolve, reject) => {
         researchModel
             .findOneAndDelete(query)
-            .then(deleteResearch => {
+            .then(async deleteResearch => {
                 // find Research and delete
                 if (deleteResearch) {
                     //delete counter product ID from counter
-                    const counter = counterModel.findOne();
+                    const counter = await counterModel.findOne();
                     if (counter) {
                         //delete research ID that deleted in research
                         if (counter.researchAccess.has(id)) {
