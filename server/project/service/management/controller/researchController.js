@@ -66,6 +66,7 @@ exports.deleteResearchController = async function (query, id) {
                             counter.researchSessionIds.delete(id);
                         }
                     }
+                    counter.save();
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
