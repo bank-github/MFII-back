@@ -11,19 +11,19 @@ const cornJob = () => {
 
             if (visit) {
                 const currentTime = new Date();
-                const updatedProductSessionIds = new Map();
+                const updatedResearchSessionIds = new Map();
 
-                visit.productSessionIds.forEach((sessionIds, productId) => {
+                visit.researchSessionIds.forEach((sessionIds, researchId) => {
                     const validSessions = sessionIds.filter(entry => {
                         const sessionAge = currentTime - new Date(entry.createdAt);
                         return sessionAge <= SESSION_TIMEOUT;
                     });
                     if (validSessions.length > 0) {
-                        updatedProductSessionIds.set(productId, validSessions);
+                        updatedResearchSessionIds.set(researchId, validSessions);
                     }
                 });
 
-                visit.productSessionIds = updatedProductSessionIds;
+                visit.researchSessionIds = updatedResearchSessionIds;
                 await visit.save();
             }
 

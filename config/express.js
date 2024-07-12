@@ -161,19 +161,19 @@ module.exports = function () {
 
           }
 
-          if (!visit.productSessionIds) {
-            visit.productSessionIds = new Map();
+          if (!visit.researchSessionIds) {
+            visit.researchSessionIds = new Map();
           }
 
           // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง productId มาด้วย)
           const productId = request.query.researchId;
           if (productId) {
-            const sessionIds = visit.productSessionIds.get(productId) || [];
+            const sessionIds = visit.researchSessionIds.get(productId) || [];
             const sessionExits = sessionIds.some(entry => entry.sessionId === sessionId);
             if(!sessionExits){
-              visit.productAccess.set(productId, (visit.productAccess.get(productId) || 0) + 1);
+              visit.researchAccess.set(productId, (visit.researchAccess.get(productId) || 0) + 1);
               sessionIds.push({sessionId, createdAt: currentTime});
-              visit.productSessionIds.set(productId, sessionIds);
+              visit.researchSessionIds.set(productId, sessionIds);
             }
           }
 
