@@ -82,7 +82,7 @@ exports.deleteFileDynamic = async function (request, response, next) {
                     });
                 }
             });
-            next(); 
+            next();
         } else {
             next();
         }
@@ -114,17 +114,23 @@ exports.deleteFileSome = async function (request, response, next) {
         }
 
         if (document.filePath) {
+            let errors = [];
             document.filePath.forEach(file => {
                 if (file !== 'uploads/image/noImage.jpg') {
                     const filePath = path.join(__dirname, '../' + file);
                     fs.unlink(filePath, (err) => {
                         if (err) {
-                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                            errors.push(err);
                         }
                     });
                 }
             });
-            next(); 
+            if (errors.length > 0) {
+                console.log(errors);
+                return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+            } else {
+                next();
+            }
         } else {
             response.status(404).json({ result: {}, description: "File path not found" });
         }
@@ -153,7 +159,7 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        let originalName = sanitizeFilename(file.originalname); 
+        let originalName = sanitizeFilename(file.originalname);
         cb(null, Date.now() + '_' + originalName);
     }
 });
