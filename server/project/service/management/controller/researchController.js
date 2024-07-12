@@ -1,4 +1,5 @@
 var researchModel = require('../models/researchModel');
+var counterModel = require('../models/counterModel');
 
 exports.getResearchController = async function (query) {
     return new Promise((resolve, reject) => {
@@ -47,13 +48,24 @@ exports.addResearchController = async function (data) {
     });
 };
 
-exports.deleteResearchController = async function (query) {
+exports.deleteResearchController = async function (query, id) {
     return new Promise((resolve, reject) => {
         researchModel
             .findOneAndDelete(query)
             .then(deleteResearch => {
                 // find Research and delete
                 if (deleteResearch) {
+                    //delete counter product ID from counter
+                    const counter = counterModel.findOne();
+                    if (counter) {
+                        //delete research ID that deleted in research
+                        if (counter.researchAccess.has(id)) {
+                            counter.researchAccess.delete(id);
+                        }
+                        if (counter.researchSessionIds.has(id)) {
+                            counter.researchSessionIds.delete(id);
+                        }
+                    }
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
@@ -67,19 +79,20 @@ exports.deleteResearchController = async function (query) {
     });
 };
 
-exports.updateFileResearchController = async function (query,update) {
+exports.updateFileResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
             .findOneAndUpdate(query, update, { new: true }) // เพิ่ม { new: true } เพื่อให้ได้ผลลัพธ์ที่อัปเดตล่าสุด
             .then(async updateResearch => {
                 if (updateResearch) {
                     // ตรวจสอบว่าไม่มีไฟล์ใดใน filePath ที่มีคำนำหน้า uploads/image/
-                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\'));
+                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\')||file.startsWith('uploads/image/'));
+                    const hasNoImageFile = updateResearch.filePath.includes('uploads/image/noImage.jpg');
 
                     if (!hasImageFile) {
                         // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
                         await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
-                    } else {
+                    } else if(hasImageFile && hasNoImageFile) {
                         // ลบ uploads/image/noImage.jpg จาก array filePath
                         await researchModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
                     }
@@ -100,11 +113,11 @@ exports.updateFileResearchController = async function (query,update) {
 exports.updateDataResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
-        .findByIdAndUpdate(query._id, update, { new: true })
+            .findByIdAndUpdate(query._id, update, { new: true })
             .then(updateResearch => {
                 // find Research and delete
                 if (updateResearch) {
-                    var resInfo = { result: {updateResearch}, code: { codeNo: 200, description: 20000 } }
+                    var resInfo = { result: { updateResearch }, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
                 //no Research in database

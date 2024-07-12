@@ -114,13 +114,17 @@ exports.deleteFileSome = async function (request, response, next) {
         }
 
         if (document.filePath) {
-            const filePath = request.body.filePath;
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+            document.filePath.forEach(file => {
+                if (file !== 'uploads/image/noImage.jpg') {
+                    const filePath = path.join(__dirname, '../' + file);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                        }
+                    });
                 }
-                next();
             });
+            next(); 
         } else {
             response.status(404).json({ result: {}, description: "File path not found" });
         }
