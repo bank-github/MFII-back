@@ -89,7 +89,7 @@ exports.updateFileResearchController = async function (query, update) {
                     const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\')||file.startsWith('uploads/image/'));
                     const hasNoImageFile = updateResearch.filePath.includes('uploads/image/noImage.jpg');
 
-                    if (!hasNoImageFile) {
+                    if (!hasNoImageFile && !hasImageFile) {
                         // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
                         await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
                     } else if(hasImageFile && hasNoImageFile) {
