@@ -1,0 +1,2 @@
+"start": "nodemon -r dotenv/config server.js"
+this is if crash it not restart
