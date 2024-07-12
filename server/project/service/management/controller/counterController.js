@@ -28,7 +28,7 @@ exports.getStatController = async function (query) {
                     weeklyAccess: weeklyAccess,
                     monthlyAccess: doc.monthlyAccess.get(stringThisMonth),
                     yearlyAccess: doc.yearlyAccess.get(stringThisYear),
-                    productAccess: doc.productAccess,
+                    researchAccess: doc.researchAccess,
                 };
 
                 var resInfo = { result: data, code: { codeNo: 200, description: 20000 } };
