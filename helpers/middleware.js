@@ -72,17 +72,23 @@ exports.deleteFileDynamic = async function (request, response, next) {
         }
 
         if (document.filePath) {
+            let errors = [];
             document.filePath.forEach(file => {
                 if (file !== 'uploads/image/noImage.jpg') {
                     const filePath = path.join(__dirname, '../' + file);
                     fs.unlink(filePath, (err) => {
                         if (err) {
-                            return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+                            errors.push(err);
                         }
                     });
                 }
             });
-            next();
+            if (errors.length > 0) {
+                console.log(errors);
+                return response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+            } else {
+                next();
+            }
         } else {
             next();
         }
