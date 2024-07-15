@@ -90,14 +90,13 @@ exports.updateFileResearchController = async function (query, update) {
                     if (updateResearch.filePath.length === 0) {
                         await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
                     } else {
-                        const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/'));
                         const hasNoImageFile = updateResearch.filePath.includes('uploads/image/noImage.jpg');
-                        const hasPdfFile = updateResearch.filePath.some(file => file.startsWith('uploads\\pdf\\') || file.startsWith('uploads/pdf/'));
+                        const hasOtherImageFile = updateResearch.filePath.some(file => (file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/')) && file !== 'uploads/image/noImage.jpg');
                         
-                        if (!hasNoImageFile && !hasImageFile) {
+                        if (!hasNoImageFile && !hasOtherImageFile) {
                             // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
                             await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
-                        } else if (hasImageFile && hasNoImageFile && !hasPdfFile) {
+                        } else if (hasNoImageFile && hasOtherImageFile) {
                             // ลบ uploads/image/noImage.jpg จาก array filePath
                             await researchModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
                         }
@@ -114,6 +113,7 @@ exports.updateFileResearchController = async function (query, update) {
             });
     });
 };
+
 
 
 
