@@ -86,16 +86,21 @@ exports.updateFileResearchController = async function (query, update) {
             .findOneAndUpdate(query, update, { new: true }) // เพิ่ม { new: true } เพื่อให้ได้ผลลัพธ์ที่อัปเดตล่าสุด
             .then(async updateResearch => {
                 if (updateResearch) {
-                    // ตรวจสอบว่าไม่มีไฟล์ใดใน filePath ที่มีคำนำหน้า uploads/image/
-                    const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\')||file.startsWith('uploads/image/'));
-                    const hasNoImageFile = updateResearch.filePath.includes('uploads/image/noImage.jpg');
-
-                    if (!hasNoImageFile && !hasImageFile) {
-                        // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
+                    // ตรวจสอบว่าถ้า filePath เป็น array ว่าง ให้เพิ่ม uploads/image/noImage.jpg
+                    if (updateResearch.filePath.length === 0) {
                         await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
-                    } else if(hasImageFile && hasNoImageFile) {
-                        // ลบ uploads/image/noImage.jpg จาก array filePath
-                        await researchModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
+                    } else {
+                        const hasImageFile = updateResearch.filePath.some(file => file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/'));
+                        const hasNoImageFile = updateResearch.filePath.includes('uploads/image/noImage.jpg');
+                        const hasPdfFile = updateResearch.filePath.some(file => file.startsWith('uploads\\pdf\\') || file.startsWith('uploads/pdf/'));
+                        
+                        if (!hasNoImageFile && !hasImageFile) {
+                            // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
+                            await researchModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
+                        } else if (hasImageFile && hasNoImageFile && !hasPdfFile) {
+                            // ลบ uploads/image/noImage.jpg จาก array filePath
+                            await researchModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
+                        }
                     }
 
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
@@ -109,6 +114,7 @@ exports.updateFileResearchController = async function (query, update) {
             });
     });
 };
+
 
 
 exports.updateDataResearchController = async function (query, update) {
