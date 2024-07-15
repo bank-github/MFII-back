@@ -7,7 +7,7 @@ var newsModel = new Schema({
     filePath            : { type: Array, required: true },
     linkVideo           : { type: Array, required: true },
     linkImage           : { type: Array, required: true },
-    linkPage            : { type: String, required: true}
+    linkPage            : { type: String}
 });
 
 var news = mongoose.model('news', newsModel, 'news');
