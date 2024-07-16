@@ -21,7 +21,7 @@ var middleware = require("../../helpers/middleware");
   app.get(api + '/getStatProduct', counterManagement.getProductServices);
 
   // use to create admin for use only may be delete when add already
-  app.post(api + "/createAdmin", userManagement.createUserService);
+  // app.post(api + "/createAdmin", userManagement.createUserService);
 
 
   //verify role for frontend
@@ -80,7 +80,7 @@ var middleware = require("../../helpers/middleware");
   //================================================\\
 
 
-  //========== login user and staff can use ==========\\
+  //========== login all role can use ==========\\
   //message
   app.get(api + "/mesGetData", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.getRequestService);
   app.get(api + "/mesDetail/:id", middleware.verifyTokenAndRole(["user", "staff", "admin"]), mesManagement.getMessageReplyService);

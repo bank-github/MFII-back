@@ -1,4 +1,5 @@
 var userModel = require('../models/userModel');
+var messageModel = require('../models/messageModel');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const saltRound = 10;
@@ -124,7 +125,8 @@ exports.deleteStaffContoller = async function (query) {
     return new Promise((resolve, reject) => {
         userModel
             .findOneAndDelete(query)
-            .then(deleteUser => {
+            .then(async deleteUser => {
+                await messageModel.deleteMany({userId: query._id});
                 // find user and delete
                 if (deleteUser) {
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
