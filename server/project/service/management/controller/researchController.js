@@ -23,7 +23,7 @@ exports.getsResearchController = async function (query) {
     return new Promise((resolve, reject) => {
         researchModel
             .find(query, { __v: 0 })
-            .sort({ nameMedia: -1 })
+            .sort({ updatedAt: -1 })
             .then(doc => {
                 var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
                 resolve(resInfo);
