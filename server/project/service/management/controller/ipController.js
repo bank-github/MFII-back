@@ -1,0 +1,88 @@
+var IPModel = require('../models/ipModel');
+
+exports.getIPController = async function (query) {
+    return new Promise((resolve, reject) => {
+        IPModel
+            .findOne(query, { __v: 0 })
+            .then(doc => {
+                if (doc == null) {
+                    var resInfo = { result: {}, code: { codeNo: 404, description: 40401 } };
+                    reject(resInfo);
+                }
+                var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
+                resolve(resInfo);
+            }).catch(err => {
+                var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+                reject(resInfo);
+            });
+    });
+};
+
+exports.getsIPController = async function (query) {
+    return new Promise((resolve, reject) => {
+        IPModel
+            .find(query, { __v: 0 })
+            .sort({ updatedAt: -1 })
+            .then(doc => {
+                var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
+                resolve(resInfo);
+            }).catch(err => {
+                var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+                reject(resInfo);
+            });
+    });
+};
+
+exports.addIpController = async function (data) {
+    return new Promise((resolve, reject) => {
+        var IPModels = new IPModel(data);
+        IPModels.save()
+            .then(() => {
+                var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
+                resolve(resInfo);
+            }).catch(err => {
+                var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+                reject(resInfo);
+            });
+    });
+};
+
+exports.deleteIPController = async function (query) {
+    return new Promise((resolve, reject) => {
+        IPModel
+            .findOneAndDelete(query)
+            .then(deleteIP => {
+                // find ip and delete
+                if (deleteIP) {
+                    var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                //no ip in database
+                else {
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+};
+
+exports.updateDataIPController = async function (query, update) {
+    return new Promise((resolve, reject) => {
+        IPModel
+            .findByIdAndUpdate(query._id, update, { new: true })
+            .then(updateIP => {
+                // find ip and update
+                if (updateIP) {
+                    var resInfo = { result: { updateIP }, code: { codeNo: 200, description: 20000 } }
+                    resolve(resInfo);
+                }
+                //no ip in database
+                else {
+                    reject({ error: {}, code: { codeNo: 404, description: 40402 } });
+                }
+            }).catch(err => {
+                reject({ error: err, code: { codeNo: 500, description: 50000 } });
+            });
+    });
+};

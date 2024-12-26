@@ -3,6 +3,7 @@ var newsManagement = require("../project/service/management/service/newsServices
 var mesManagement = require("../project/service/management/service/messageServices");
 var researchManagement = require("../project/service/management/service/researchServices");
 var counterManagement = require("../project/service/management/service/counterServices");
+var ipManagement = require("../project/service/management/service/ipServices");
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -94,5 +95,12 @@ var middleware = require("../../helpers/middleware");
   
   // csv download 
   app.get(api + '/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
+
+  //ip Phase 2
+  app.get(api + "/getsIP/:ipType/:industType/:descript", ipManagement.getsIPServices); //get all ip
+  app.get(api + "/getIP", ipManagement.getIPServices); //get specific ip
+  app.post(api + "/addIP", ipManagement.addIPServices);
+  app.patch(api + "/updateIPData/:id", ipManagement.updateIPServices);
+  app.delete(api + "/deleteIP/:id", ipManagement.deleteIPServices);
 
 };
