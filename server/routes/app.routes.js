@@ -4,6 +4,8 @@ var mesManagement = require("../project/service/management/service/messageServic
 var researchManagement = require("../project/service/management/service/researchServices");
 var counterManagement = require("../project/service/management/service/counterServices");
 var ipManagement = require("../project/service/management/service/ipServices");
+var servicesManagement = require("../project/service/management/service/servicesServices");
+var ragulationManagement = require("../project/service/management/service/regulationServices");
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -96,11 +98,29 @@ var middleware = require("../../helpers/middleware");
   // csv download 
   app.get(api + '/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
 
-  //ip Phase 2
+  //ip Phase 2 
+  //ip
   app.get(api + "/getsIP/:ipType/:industType/:descript", ipManagement.getsIPServices); //get all ip
   app.get(api + "/getIP", ipManagement.getIPServices); //get specific ip
   app.post(api + "/addIP", ipManagement.addIPServices);
-  app.patch(api + "/updateIPData/:id", ipManagement.updateIPServices);
   app.delete(api + "/deleteIP/:id", ipManagement.deleteIPServices);
+  app.patch(api + "/updateIPData/:id", ipManagement.updateIPServices);
 
+  // services
+  app.get(api + "/getServices", servicesManagement.getServicesServices) // get via id
+  app.get(api + "/getsServices/:servicesType/:servicesSubType", servicesManagement.getsServicesServices)
+  app.post(api + "/addServices", middleware.upload.any(), servicesManagement.addServicesServices) // add services
+  app.delete(api + "/deleteServices/:model/:id", middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
+  app.patch(api + "/deleteFileServices/:model/:id", middleware.deleteFileDynamic, servicesManagement.deleteFileServicesServices) //delete image file of services
+  app.patch(api + "/addFileServices/:model/:id", middleware.upload.any(), servicesManagement.addFileServicesServices) //add image file of services
+  app.patch(api + "/updateServicesData/:id", servicesManagement.updateDataServicesServices) //update data of services
+
+  //regulation
+  app.get(api + "/getRegulation", ragulationManagement.getRegulationServices) // get via id
+  app.get(api + "/getsRegulation", ragulationManagement.getsRegulationServices)
+  app.post(api + "/addRegulation", middleware.upload.any(), ragulationManagement.addRegulationServices) // add regulation
+  app.delete(api + "/deleteRegulation/:model/:id", middleware.deleteFileDynamic, ragulationManagement.deleteRegulationServices) //delete regulation
+  app.patch(api + "/deleteFileRegulation/:model/:id", middleware.deleteFileDynamic, ragulationManagement.deleteFileRegulationServices) //delete image file of regulation
+  app.patch(api + "/addFileRegulation/:model/:id", middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
+  app.patch(api + "/updateRegulationData/:id", ragulationManagement.updateDataRegulationServices) //update data of regulation
 };
