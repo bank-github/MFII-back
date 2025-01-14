@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var servicesModel = new Schema({
-    informaion       : { type: String, required: true },
+    information       : { type: String, required: true },
     servicesType     : { type: String, required: true },
     servicesSubType  : { type: String, default: "-" },
     filePath         : { type: [String], default: [] }

@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var regulationModel = new Schema({
     regulationName     : { type: String, required: true },
-    filePath        : { type: [String], default: []}
+    filePath           : { type: [String], default: []}
 }, { timestamps: true });
 
 var regulation = mongoose.model('regulation', regulationModel, 'regulation');

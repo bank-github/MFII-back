@@ -98,29 +98,35 @@ var middleware = require("../../helpers/middleware");
   // csv download 
   app.get(api + '/download', middleware.verifyTokenAndRole("admin"),middleware.downloadCsv);
 
-  //ip Phase 2 
+  //Phase 2 
+  //============= all role can use =============\\
   //ip
   app.get(api + "/getsIP/:ipType/:industType/:descript", ipManagement.getsIPServices); //get all ip
   app.get(api + "/getIP", ipManagement.getIPServices); //get specific ip
-  app.post(api + "/addIP", ipManagement.addIPServices);
-  app.delete(api + "/deleteIP/:id", ipManagement.deleteIPServices);
-  app.patch(api + "/updateIPData/:id", ipManagement.updateIPServices);
-
   // services
-  app.get(api + "/getServices", servicesManagement.getServicesServices) // get via id
-  app.get(api + "/getsServices/:servicesType/:servicesSubType", servicesManagement.getsServicesServices)
-  app.post(api + "/addServices", middleware.upload.any(), servicesManagement.addServicesServices) // add services
-  app.delete(api + "/deleteServices/:model/:id", middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
-  app.patch(api + "/deleteFileServices/:model/:id", middleware.deleteFileDynamic, servicesManagement.deleteFileServicesServices) //delete image file of services
-  app.patch(api + "/addFileServices/:model/:id", middleware.upload.any(), servicesManagement.addFileServicesServices) //add image file of services
-  app.patch(api + "/updateServicesData/:id", servicesManagement.updateDataServicesServices) //update data of services
-
+  app.get(api + "/getsServices/:servicesType/:servicesSubType", servicesManagement.getsServicesServices) // get all services
+  app.get(api + "/getServices", servicesManagement.getServicesServices) //get specific services
   //regulation
-  app.get(api + "/getRegulation", ragulationManagement.getRegulationServices) // get via id
-  app.get(api + "/getsRegulation", ragulationManagement.getsRegulationServices)
-  app.post(api + "/addRegulation", middleware.upload.any(), ragulationManagement.addRegulationServices) // add regulation
-  app.delete(api + "/deleteRegulation/:model/:id", middleware.deleteFileDynamic, ragulationManagement.deleteRegulationServices) //delete regulation
-  app.patch(api + "/deleteFileRegulation/:model/:id", middleware.deleteFileDynamic, ragulationManagement.deleteFileRegulationServices) //delete image file of regulation
-  app.patch(api + "/addFileRegulation/:model/:id", middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
-  app.patch(api + "/updateRegulationData/:id", ragulationManagement.updateDataRegulationServices) //update data of regulation
+  app.get(api + "/getRegulation", ragulationManagement.getRegulationServices) // get specific regulation
+  app.get(api + "/getsRegulation", ragulationManagement.getsRegulationServices) // get all regulation
+  //================================================\\
+
+  //================ staff can use (admin can use also) =================\\
+  // ip
+  app.post(api + "/addIP", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.addIPServices);
+  app.delete(api + "/deleteIP/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.deleteIPServices);
+  app.patch(api + "/updateIPData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.updateIPServices);
+  // services
+  app.post(api + "/addServices", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addServicesServices) // add services
+  app.delete(api + "/deleteServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
+  app.patch(api + "/deleteFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteFileServicesServices) //delete image file of services
+  app.patch(api + "/addFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addFileServicesServices) //add image file of services
+  app.patch(api + "/updateServicesData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), servicesManagement.updateDataServicesServices) //update data of services
+  //regulation
+  app.post(api + "/addRegulation", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addRegulationServices) // add regulation
+  app.delete(api + "/deleteRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteRegulationServices) //delete regulation
+  app.patch(api + "/deleteFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteFileRegulationServices) //delete image file of regulation
+  app.patch(api + "/addFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
+  app.patch(api + "/updateRegulationData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ragulationManagement.updateDataRegulationServices) //update data of regulation
+  //================================================\\
 };
