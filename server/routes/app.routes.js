@@ -113,20 +113,20 @@ var middleware = require("../../helpers/middleware");
 
   //================ staff can use (admin can use also) =================\\
   // ip
-  app.post(api + "/addIP", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.addIPServices);
-  app.delete(api + "/deleteIP/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.deleteIPServices);
-  app.patch(api + "/updateIPData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.updateIPServices);
+  app.post(api + staffPath + "/addIP", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.addIPServices);
+  app.delete(api + staffPath + "/deleteIP/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.deleteIPServices);
+  app.patch(api + staffPath + "/updateIPData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.updateIPServices);
   // services
-  app.post(api + "/addServices", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addServicesServices) // add services
-  app.delete(api + "/deleteServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
-  app.patch(api + "/deleteFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteFileServicesServices) //delete image file of services
-  app.patch(api + "/addFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addFileServicesServices) //add image file of services
-  app.patch(api + "/updateServicesData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), servicesManagement.updateDataServicesServices) //update data of services
+  app.post(api + staffPath + "/addServices", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addServicesServices) // add services
+  app.delete(api + staffPath + "/deleteServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
+  app.patch(api + staffPath + "/deleteFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteFileServicesServices) //delete image file of services
+  app.patch(api + staffPath + "/addFileServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addFileServicesServices) //add image file of services
+  app.patch(api + staffPath + "/updateServicesData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), servicesManagement.updateDataServicesServices) //update data of services
   //regulation
-  app.post(api + "/addRegulation", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addRegulationServices) // add regulation
-  app.delete(api + "/deleteRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteRegulationServices) //delete regulation
-  app.patch(api + "/deleteFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteFileRegulationServices) //delete image file of regulation
-  app.patch(api + "/addFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
-  app.patch(api + "/updateRegulationData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ragulationManagement.updateDataRegulationServices) //update data of regulation
+  app.post(api + staffPath + "/addRegulation", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addRegulationServices) // add regulation
+  app.delete(api + staffPath + "/deleteRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteRegulationServices) //delete regulation
+  app.patch(api + staffPath + "/deleteFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, ragulationManagement.deleteFileRegulationServices) //delete image file of regulation
+  app.patch(api + staffPath + "/addFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
+  app.patch(api + staffPath + "/updateRegulationData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ragulationManagement.updateDataRegulationServices) //update data of regulation
   //================================================\\
 };
