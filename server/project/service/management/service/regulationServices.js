@@ -22,7 +22,7 @@ exports.getRegulationServices = async function (request, response, next) {
 exports.getsRegulationServices = async function (request, response, next) {
     try {
         var query = {};
-        const doc = await regulationController.getRegulationController(query);
+        const doc = await regulationController.getsRegulationController(query);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {

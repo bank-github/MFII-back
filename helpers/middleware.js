@@ -13,7 +13,9 @@ const secretKey = "MFII-project-2024";
 const models = {
     news: require('../server/project/service/management/models/newsModel'),
     research: require('../server/project/service/management/models/researchModel'),
-    counter: require('../server/project/service/management/models/counterModel')
+    counter: require('../server/project/service/management/models/counterModel'),
+    regulation: require('../server/project/service/management/models/regulationModel'),
+    services: require('../server/project/service/management/models/servicesModel')
     //add other model
 };
 
