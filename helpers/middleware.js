@@ -7,13 +7,14 @@ const mongo = require('mongodb');
 const sanitizeFilename = require('sanitize-filename');
 const { Parser } = require('json2csv');
 const resMsg = require('../config/message');
-const { CreateSessionOutputFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const secretKey = "MFII-project-2024";
 
 const models = {
     news: require('../server/project/service/management/models/newsModel'),
     research: require('../server/project/service/management/models/researchModel'),
-    counter: require('../server/project/service/management/models/counterModel')
+    counter: require('../server/project/service/management/models/counterModel'),
+    regulation: require('../server/project/service/management/models/regulationModel'),
+    services: require('../server/project/service/management/models/servicesModel')
     //add other model
 };
 
