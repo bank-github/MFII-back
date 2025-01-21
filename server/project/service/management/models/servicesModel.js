@@ -7,6 +7,7 @@ var servicesModel = new Schema({
     information       : { type: String, required: true },
     servicesType     : { type: String, required: true },
     servicesSubType  : { type: String, default: "-" },
+    linkServices  : { type: String, default: "-" },
     filePath         : { type: [String], default: [] }
 }, { timestamps: true });
 
