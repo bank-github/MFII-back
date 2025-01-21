@@ -126,7 +126,7 @@ exports.addFileServicesServices = async function (request, response, next) {
         request.files.forEach(file => {
             update.$push.filePath.push(file.path); // Push each file's path to the update object
         });
-        const doc = await servicesController.updateFileservicesController(query, update);
+        const doc = await servicesController.updateFileServicesController(query, update);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {
