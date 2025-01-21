@@ -18,9 +18,9 @@ exports.getRegulationController = async function (query) {
     });
 };
 
-exports.getsServicesController = async function (query) {
+exports.getsRegulationController = async function (query) {
     return new Promise((resolve, reject) => {
-        servicesModel
+        regulationModel
             .find(query, { __v: 0 })
             .sort({ updatedAt: -1 })
             .then(doc => {
@@ -54,18 +54,6 @@ exports.deleteRegulationController = async function (query, id) {
             .then(async deleteregulation => {
                 // find regulation and delete
                 if (deleteregulation) {
-                    //delete counter product ID from counter
-                    const counter = await counterModel.findOne();
-                    if (counter) {
-                        //delete regulation ID that deleted in regulation
-                        if (counter.regulationAccess.has(id)) {
-                            counter.regulationAccess.delete(id);
-                        }
-                        if (counter.regulationSessionIds.has(id)) {
-                            counter.regulationSessionIds.delete(id);
-                        }
-                    }
-                    counter.save();
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } }
                     resolve(resInfo);
                 }
