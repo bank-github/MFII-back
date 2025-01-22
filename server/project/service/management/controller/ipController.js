@@ -90,7 +90,7 @@ exports.updateDataIPController = async function (query, update) {
 
 exports.countIPController = async function (query) {
     return new Promise((resolve, reject) => {
-        researchModel
+        IPModel
         .aggregate([
             { $match: query }, // กรองข้อมูลตาม query ที่ส่งมา
             {
