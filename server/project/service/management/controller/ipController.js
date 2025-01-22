@@ -1,4 +1,5 @@
 var IPModel = require('../models/ipModel');
+var researchModel = require('../models/researchModel');
 
 exports.getIPController = async function (query) {
     return new Promise((resolve, reject) => {
@@ -84,5 +85,44 @@ exports.updateDataIPController = async function (query, update) {
             }).catch(err => {
                 reject({ error: err, code: { codeNo: 500, description: 50000 } });
             });
+    });
+};
+
+exports.countIPController = async function (query) {
+    return new Promise((resolve, reject) => {
+        researchModel
+        .aggregate([
+            { $match: query }, // กรองข้อมูลตาม query ที่ส่งมา
+            {
+                $group: {
+                    _id: { beLongTo: "$beLongTo", ipType: "$ipType" },
+                    count: { $sum: 1 } // นับจำนวนเอกสารในแต่ละกลุ่ม
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.beLongTo",
+                    ipTypeCounts: {
+                        $push: {
+                            ipType: "$_id.ipType",
+                            count: "$count"
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    beLongTo: "$_id",
+                    ipTypeCounts: 1
+                }
+            }
+        ]).then(doc => {
+            var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
+            resolve(resInfo);
+        }).catch(err => {
+            var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+            reject(resInfo);
+        });
     });
 };

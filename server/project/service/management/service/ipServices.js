@@ -88,12 +88,28 @@ exports.deleteIPServices = async function (request, response, next) {
     }
 };
 
-exports.updateIPServices = async function (request, response, next) {
+exports.updateDataIPServices = async function (request, response, next) {
     try {
         var query = { _id: new mongo.ObjectId(request.params.id) };
         var update = request.body;
 
         const doc = await IPController.updateDataIPController(query, update);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};
+
+exports.countIPServices = async function (request, response, next) {
+    try {
+        var query = {};
+        const doc = await IPController.countIPController(query);
         response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
     } catch (err) {
         if (err.code != null) {

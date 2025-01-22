@@ -101,6 +101,7 @@ var middleware = require("../../helpers/middleware");
   //Phase 2 
   //============= all role can use =============\\
   //ip
+  app.get(api + "/countIP",ipManagement.countIPServices);
   app.get(api + "/getsIP/:ipType/:industType/:descript", ipManagement.getsIPServices); //get all ip
   app.get(api + "/getIP", ipManagement.getIPServices); //get specific ip
   // services
@@ -115,7 +116,7 @@ var middleware = require("../../helpers/middleware");
   // ip
   app.post(api + staffPath + "/addIP", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.addIPServices);
   app.delete(api + staffPath + "/deleteIP/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.deleteIPServices);
-  app.patch(api + staffPath + "/updateIPData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.updateIPServices);
+  app.patch(api + staffPath + "/updateIPData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ipManagement.updateDataIPServices);
   // services
   app.post(api + staffPath + "/addServices", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), servicesManagement.addServicesServices) // add services
   app.delete(api + staffPath + "/deleteServices/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.deleteFileDynamic, servicesManagement.deleteServicesServices) //delete services
