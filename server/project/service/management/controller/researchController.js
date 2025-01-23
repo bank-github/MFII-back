@@ -114,9 +114,6 @@ exports.updateFileResearchController = async function (query, update) {
     });
 };
 
-
-
-
 exports.updateDataResearchController = async function (query, update) {
     return new Promise((resolve, reject) => {
         researchModel
@@ -137,5 +134,41 @@ exports.updateDataResearchController = async function (query, update) {
     });
 };
 
-
-
+exports.countResearchController = async function (query) {
+    return new Promise((resolve, reject) => {
+        researchModel
+        .aggregate([
+            { $match: query }, // กรองข้อมูลตาม query ที่ส่งมา
+            {
+                $group: {
+                    _id: { intelProp: "$intelProp", techReadiness: "$techReadiness" },
+                    count: { $sum: 1 } // นับจำนวนเอกสารในแต่ละกลุ่ม
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.intelProp",
+                    techReadinessCounts: {
+                        $push: {
+                            techReadiness: "$_id.techReadiness",
+                            count: "$count"
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    intelProp: "$_id",
+                    techReadinessCounts: 1
+                }
+            }
+        ]).then(doc => {
+            var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
+            resolve(resInfo);
+        }).catch(err => {
+            var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+            reject(resInfo);
+        });
+    });
+};

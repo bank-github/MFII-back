@@ -168,3 +168,19 @@ exports.updateDataResearchServices = async function (request, response, next) {
         }
     }
 };
+
+exports.countResearchServices = async function (request, response, next) {
+    try {
+        var query = {};
+        const doc = await researchController.countResearchController(query);
+        response.status(doc.code.codeNo).json({ result: doc.result, description: resMsg.getMsg(doc.code.description) });
+    } catch (err) {
+        if (err.code != null) {
+            console.log(err.error)
+            response.status(err.code.codeNo).json({ result: err.error, description: resMsg.getMsg(err.code.description) });
+        } else {
+            console.log(err);
+            response.status(500).json({ result: {}, description: resMsg.getMsg(50000) });
+        }
+    }
+};

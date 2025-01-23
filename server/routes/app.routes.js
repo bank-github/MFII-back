@@ -100,6 +100,8 @@ var middleware = require("../../helpers/middleware");
 
   //Phase 2 
   //============= all role can use =============\\
+  //research 
+  app.get(api + "/countResearch",researchManagement.countResearchServices);
   //ip
   app.get(api + "/countIP",ipManagement.countIPServices);
   app.get(api + "/getsIP/:ipType/:industType/:descript", ipManagement.getsIPServices); //get all ip
