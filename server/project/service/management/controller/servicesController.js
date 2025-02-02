@@ -78,7 +78,7 @@ exports.updateFileServicesController = async function (query, update) {
                         await servicesModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
                     } else {
                         const hasNoImageFile = updateservices.filePath.includes('uploads/image/noImage.jpg');
-                        const hasOtherImageFile = updateservices.filePath.some(file => (file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/')) && file !== 'uploads/image/noImage.jpg');
+                        const hasOtherImageFile = updateservices.filePath.some(file => (file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/') || file.endsWith('.pdf')) && file !== 'uploads/image/noImage.jpg');
                         
                         if (!hasNoImageFile && !hasOtherImageFile) {
                             // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
