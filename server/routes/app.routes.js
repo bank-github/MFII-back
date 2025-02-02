@@ -139,4 +139,6 @@ var middleware = require("../../helpers/middleware");
   app.get(api + "/getDocs/:id", docsManagement.getDocsByIdService);// get specific docs via id
   app.delete(api  + "/deleteDocs/:id", docsManagement.deleteDocsServices);// delete specific docs
   app.patch(api  + "/updateDocs/:id", docsManagement.updateDocsServices) //update data docs
+
+  app.get(api + "/getIPFirstPage", ipManagement.firstPageIPServices);// get ip firstpage
 };

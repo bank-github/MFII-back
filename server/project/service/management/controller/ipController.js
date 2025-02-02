@@ -126,3 +126,46 @@ exports.countIPController = async function (query) {
         });
     });
 };
+
+exports.firstPageIPController = async function (query) {
+    return new Promise((resolve, reject) => {
+        IPModel
+        .aggregate([
+            { $match: query }, // กรองข้อมูลตาม query ที่ส่งมา
+            {
+                $project: {
+                    ipType: {
+                        $switch: {
+                            branches: [
+                                { case: { $eq: ["$ipType", "สิทธิบัตรการประดิษฐ์"] }, then: "สิทธิบัตรการประดิษฐ์" },
+                                { case: { $eq: ["$ipType", "อนุสิทธิบัตร"] }, then: "อนุสิทธิบัตร" },
+                                { case: { $eq: ["$ipType", "สิทธิบัตรการออกแบบผลิตภัณฑ์"] }, then: "สิทธิบัตรการออกแบบผลิตภัณฑ์" },
+                                { case: { $eq: ["$ipType", "เครื่องหมายการค้า"] }, then: "เครื่องหมายการค้า" }
+                            ],
+                            default: "ลิขสิทธิ์" // ถ้านอกเงื่อนไข
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$ipType",
+                    count: { $sum: 1 } // นับจำนวนเอกสารของแต่ละ ipType
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    ipType: "$_id",
+                    count: 1
+                }
+            }
+        ]).then(doc => {
+            var resInfo = { result: doc, code: { codeNo: 200, description: 20000 } };
+            resolve(resInfo);
+        }).catch(err => {
+            var resInfo = { error: err, code: { codeNo: 500, description: 50003 } };
+            reject(resInfo);
+        });
+    });
+};
