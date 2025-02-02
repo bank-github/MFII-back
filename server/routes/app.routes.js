@@ -6,6 +6,7 @@ var counterManagement = require("../project/service/management/service/counterSe
 var ipManagement = require("../project/service/management/service/ipServices");
 var servicesManagement = require("../project/service/management/service/servicesServices");
 var ragulationManagement = require("../project/service/management/service/regulationServices");
+var docsManagement = require("../project/service/management/service/docsServices");
 var middleware = require("../../helpers/middleware");
 
 ; module.exports = function (app) {
@@ -132,4 +133,10 @@ var middleware = require("../../helpers/middleware");
   app.patch(api + staffPath + "/addFileRegulation/:model/:id", middleware.verifyTokenAndRole(["staff", "admin"]), middleware.upload.any(), ragulationManagement.addFileRegulationServices) //add image file of regulation
   app.patch(api + staffPath + "/updateRegulationData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ragulationManagement.updateDataRegulationServices) //update data of regulation
   //================================================\\
+
+  app.post(api + "/addDocs", docsManagement.addDocsServices);// add news and image
+  app.get(api + "/getDocsAll", docsManagement.getsDocsServices);// get all docs
+  app.get(api + "/getDocs/:id", docsManagement.getDocsByIdService);// get specific docs via id
+  app.delete(api  + "/deleteDocs/:id", docsManagement.deleteDocsServices);// delete specific docs
+  app.patch(api  + "/updateDocs/:id", docsManagement.updateDocsServices) //update data docs
 };
