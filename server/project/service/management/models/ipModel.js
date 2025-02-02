@@ -11,14 +11,14 @@ var ipModel = new Schema({
     holderOfRight   : { type: String, required: true }, //ผู้ทรงสิทธิ
     ipType          : { type: String, required: true }, //ประเภท
     requestNo       : { type: String, required: true }, //เลขที่คำขอ
-    submitDate      : { type: Date, default: '-' },     //วันที่ยื่นคำขอ
+    submitDate      : { type: String, default: '-' },     //วันที่ยื่นคำขอ
     finalStatus     : { type: String, default: true },  //สถานะสุดท้าย
     addEditing      : { type: String, default: "-" },   //แก้ไขเพิ่มเติม
     adsNo           : { type: String, default: "-" },   //เลขประกาศโฆษณา
-    adsDate         : { type: Date, default: "-"},      //วันที่ประกาศโฆษณา
+    adsDate         : { type: String, default: "-"},      //วันที่ประกาศโฆษณา
     regNo           : { type: String, default: "-"},    //เลขที่รับจดทะเบียน
-    regDate         : { type: Date, default: "-"},      //วันที่รับจดทะเบียน
-    expDate         : { type: Date, default: "-"},      //วันที่หมดอายุ
+    regDate         : { type: String, default: "-"},      //วันที่รับจดทะเบียน
+    expDate         : { type: String, default: "-"},      //วันที่หมดอายุ
     feePay          : { type: String, default: "-"},    //ครบกำหนดชำระรายปี
     notiFeePay      : { type: String, default: "-"},    //แจ้งเตือนชำระค่าธรรมเนียมรายปี
     other           : { type: String, default: "-"},    //อื่นๆ
