@@ -74,20 +74,20 @@ exports.updateFileServicesController = async function (query, update) {
             .then(async updateservices => {
                 if (updateservices) {
                     // ตรวจสอบว่าถ้า filePath เป็น array ว่าง ให้เพิ่ม uploads/image/noImage.jpg
-                    if (updateservices.filePath.length === 0) {
-                        await servicesModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
-                    } else {
-                        const hasNoImageFile = updateservices.filePath.includes('uploads/image/noImage.jpg');
-                        const hasOtherImageFile = updateservices.filePath.some(file => (file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/') || file.endsWith('.pdf')) && file !== 'uploads/image/noImage.jpg');
+                    // if (updateservices.filePath.length === 0) {
+                    //     await servicesModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
+                    // } else {
+                    //     const hasNoImageFile = updateservices.filePath.includes('uploads/image/noImage.jpg');
+                    //     const hasOtherImageFile = updateservices.filePath.some(file => (file.startsWith('uploads\\image\\') || file.startsWith('uploads/image/') || file.endsWith('.pdf')) && file !== 'uploads/image/noImage.jpg');
                         
-                        if (!hasNoImageFile && !hasOtherImageFile) {
-                            // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
-                            await servicesModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
-                        } else if (hasNoImageFile && hasOtherImageFile) {
-                            // ลบ uploads/image/noImage.jpg จาก array filePath
-                            await servicesModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
-                        }
-                    }
+                    //     if (!hasNoImageFile && !hasOtherImageFile) {
+                    //         // เพิ่ม uploads/image/noImage.jpg เข้าไปใน array filePath
+                    //         await servicesModel.updateOne(query, { $push: { filePath: 'uploads/image/noImage.jpg' } });
+                    //     } else if (hasNoImageFile && hasOtherImageFile) {
+                    //         // ลบ uploads/image/noImage.jpg จาก array filePath
+                    //         await servicesModel.updateOne(query, { $pull: { filePath: 'uploads/image/noImage.jpg' } });
+                    //     }
+                    // }
 
                     var resInfo = { result: {}, code: { codeNo: 200, description: 20000 } };
                     resolve(resInfo);
