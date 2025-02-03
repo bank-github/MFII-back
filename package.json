@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "pm2 start server.js --no-daemon --watch --env development --ignore-watch=\"uploads helpers\"",
-    "dev": "nodemon -r dotenv/config server.js",
     "serve:test": "node -r dotenv/config server.js dotenv_config_path=.env.test",
     "serve:prod": "node -r dotenv/config server.js dotenv_config_path=.env.prod"
   },
