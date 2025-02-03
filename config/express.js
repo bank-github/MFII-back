@@ -125,65 +125,65 @@ module.exports = function () {
         }
       });
 
-      // counter visitor
-      app.use(async function (request, response, next) {
-        try {
+      // // counter visitor
+      // app.use(async function (request, response, next) {
+      //   try {
 
-          const sessionId = request.cookies.sessionId;
-          const currentTime = new Date();
-          let visit = await counterModel.findOne();
+      //     const sessionId = request.cookies.sessionId;
+      //     const currentTime = new Date();
+      //     let visit = await counterModel.findOne();
 
-          if (!visit) {
-            visit = new counterModel();
-          }
+      //     if (!visit) {
+      //       visit = new counterModel();
+      //     }
 
-          // ถ้าไม่มี sessionId ในคุกกี้ แสดงว่านี่เป็นการเข้าชมครั้งแรกในเซสชันนี้
-          if (!sessionId) {
-            // สร้าง sessionId ใหม่และตั้งค่าในคุกกี้
-            const newSessionId = uuidv4();
-            console.log(newSessionId);
-            response.cookie('sessionId', newSessionId, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // คุกกี้มีอายุ 1 วัน
+      //     // ถ้าไม่มี sessionId ในคุกกี้ แสดงว่านี่เป็นการเข้าชมครั้งแรกในเซสชันนี้
+      //     if (!sessionId) {
+      //       // สร้าง sessionId ใหม่และตั้งค่าในคุกกี้
+      //       const newSessionId = uuidv4();
+      //       console.log(newSessionId);
+      //       response.cookie('sessionId', newSessionId, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // คุกกี้มีอายุ 1 วัน
 
-            // เพิ่มจำนวนการเข้าชมทั้งหมด
-            visit.totalAccess += 1;
+      //       // เพิ่มจำนวนการเข้าชมทั้งหมด
+      //       visit.totalAccess += 1;
 
-            // อัปเดตการเข้าชมรายปี
-            const currentYear = new Date().toISOString().slice(0, 4); // รูปแบบ YYYY
-            visit.yearlyAccess.set(currentYear, (visit.yearlyAccess.get(currentYear) || 0) + 1);
+      //       // อัปเดตการเข้าชมรายปี
+      //       const currentYear = new Date().toISOString().slice(0, 4); // รูปแบบ YYYY
+      //       visit.yearlyAccess.set(currentYear, (visit.yearlyAccess.get(currentYear) || 0) + 1);
 
-            // อัปเดตการเข้าชมรายเดือน
-            const currentMonth = new Date().toISOString().slice(0, 7); // รูปแบบ YYYY-MM
-            visit.monthlyAccess.set(currentMonth, (visit.monthlyAccess.get(currentMonth) || 0) + 1);
+      //       // อัปเดตการเข้าชมรายเดือน
+      //       const currentMonth = new Date().toISOString().slice(0, 7); // รูปแบบ YYYY-MM
+      //       visit.monthlyAccess.set(currentMonth, (visit.monthlyAccess.get(currentMonth) || 0) + 1);
 
-            // อัปเดตการเข้าชมรายวัน
-            const currentDay = new Date().toISOString().slice(0, 10); // รูปแบบ YYYY-MM-DD
-            visit.dailyAccess.set(currentDay, (visit.dailyAccess.get(currentDay) || 0) + 1);
+      //       // อัปเดตการเข้าชมรายวัน
+      //       const currentDay = new Date().toISOString().slice(0, 10); // รูปแบบ YYYY-MM-DD
+      //       visit.dailyAccess.set(currentDay, (visit.dailyAccess.get(currentDay) || 0) + 1);
 
-          }
+      //     }
 
-          if (!visit.researchSessionIds) {
-            visit.researchSessionIds = new Map();
-          }
+      //     if (!visit.researchSessionIds) {
+      //       visit.researchSessionIds = new Map();
+      //     }
 
-          // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง researchId มาด้วย)
-          const researchId = request.query.researchId;
-          if (researchId) {
-            const sessionIds = visit.researchSessionIds.get(researchId) || [];
-            const sessionExits = sessionIds.some(entry => entry.sessionId === sessionId);
-            if(!sessionExits){
-              visit.researchAccess.set(researchId, (visit.researchAccess.get(researchId) || 0) + 1);
-              sessionIds.push({sessionId, createdAt: currentTime});
-              visit.researchSessionIds.set(researchId, sessionIds);
-            }
-          }
+      //     // อัปเดตการเข้าชมของผลิตภัณฑ์ (สมมุติว่ามีการส่ง researchId มาด้วย)
+      //     const researchId = request.query.researchId;
+      //     if (researchId) {
+      //       const sessionIds = visit.researchSessionIds.get(researchId) || [];
+      //       const sessionExits = sessionIds.some(entry => entry.sessionId === sessionId);
+      //       if(!sessionExits){
+      //         visit.researchAccess.set(researchId, (visit.researchAccess.get(researchId) || 0) + 1);
+      //         sessionIds.push({sessionId, createdAt: currentTime});
+      //         visit.researchSessionIds.set(researchId, sessionIds);
+      //       }
+      //     }
 
-          await visit.save();
-          next();
-        } catch (error) {
-          console.error('Error tracking visit:', error);
-          next(error);
-        }
-      });
+      //     await visit.save();
+      //     next();
+      //   } catch (error) {
+      //     console.error('Error tracking visit:', error);
+      //     next(error);
+      //   }
+      // });
 
       appRoutes(app);
 
