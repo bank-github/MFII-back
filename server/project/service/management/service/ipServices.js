@@ -34,7 +34,8 @@ exports.getsIPServices = async function (request, response, next) {
                         { 'inventor': { $elemMatch: { $regex: descript, $options: 'i' } } },
                         { 'beLongTo': { $regex: descript, $options: 'i' } },
                         { 'ipType': { $regex: descript, $options: 'i' } },
-                        { 'industType ': { $regex: descript, $options: 'i' } },]
+                        { 'industType': { $regex: descript, $options: 'i' } },
+                        { 'requestNo': { $regex: descript, $options: 'i' } },]
                 }
             ].filter(condition => Object.keys(condition).length > 0)
         }

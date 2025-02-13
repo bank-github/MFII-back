@@ -134,7 +134,7 @@ var middleware = require("../../helpers/middleware");
   app.patch(api + staffPath + "/updateRegulationData/:id", middleware.verifyTokenAndRole(["staff", "admin"]), ragulationManagement.updateDataRegulationServices) //update data of regulation
   //================================================\\
 
-  app.post(api + "/addDocs", docsManagement.addDocsServices);// add news and image
+  app.post(api + "/addDocs", docsManagement.addDocsServices);// add doc
   app.get(api + "/getDocsAll", docsManagement.getsDocsServices);// get all docs
   app.get(api + "/getDocs/:id", docsManagement.getDocsByIdService);// get specific docs via id
   app.delete(api  + "/deleteDocs/:id", docsManagement.deleteDocsServices);// delete specific docs
